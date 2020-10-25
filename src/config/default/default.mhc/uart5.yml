@@ -1,0 +1,36 @@
+format_version: v1.0
+type: UniqueComponent
+attributes: {id: uart5}
+children:
+- type: Symbols
+  children:
+  - type: Integer
+    attributes: {id: BRG_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: uart5, value: '32'}
+  - type: KeyValueSet
+    attributes: {id: UART_BRGH}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: uart5, value: '1'}
+  - type: Integer
+    attributes: {id: UART_CLOCK_FREQ}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: uart5, value: '60000000'}
+  - type: Hex
+    attributes: {id: UMODE_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: uart5, value: '0'}
+- type: ElementPosition
+  attributes: {x: '34', y: '419', id: uart5}

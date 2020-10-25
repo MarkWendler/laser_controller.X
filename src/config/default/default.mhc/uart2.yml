@@ -1,0 +1,51 @@
+format_version: v1.0
+type: UniqueComponent
+attributes: {id: uart2}
+children:
+- type: Symbols
+  children:
+  - type: Integer
+    attributes: {id: BRG_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: uart2, value: '32'}
+  - type: KeyValueSet
+    attributes: {id: UART_BRGH}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: uart2, value: '1'}
+  - type: Integer
+    attributes: {id: UART_CLOCK_FREQ}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: uart2, value: '60000000'}
+  - type: Hex
+    attributes: {id: UMODE_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: uart2, value: '0'}
+- type: Attachments
+  children:
+  - type: DirectCapability
+    attributes: {id: UART2_UART}
+    children:
+    - type: Attributes
+      children:
+      - type: String
+        attributes: {id: targetComponentID}
+        children:
+        - {type: Value, value: drv_usart_1}
+      - type: String
+        attributes: {id: targetAttachmentID}
+        children:
+        - {type: Value, value: drv_usart_UART_dependency}
+- type: ElementPosition
+  attributes: {x: '33', y: '214', id: uart2}
