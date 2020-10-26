@@ -1,6 +1,7 @@
 **/nbproject/private/
 **/nbproject/Makefile-*.mk
 **/nbproject/Package-*.bash
+.generated_files/
 build/
 nbbuild/
 dist/
