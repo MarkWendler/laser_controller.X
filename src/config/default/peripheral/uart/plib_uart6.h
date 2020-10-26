@@ -79,17 +79,15 @@ bool UART6_AutoBaudQuery( void );
 
 void UART6_AutoBaudSet( bool enable );
 
-bool UART6_ReadIsBusy( void );
+int UART6_ReadByte( void );
 
-size_t UART6_ReadCountGet( void );
+bool UART6_ReceiverIsReady( void );
 
-bool UART6_WriteIsBusy( void );
+void UART6_WriteByte( int data );
 
-size_t UART6_WriteCountGet( void );
+bool UART6_TransmitterIsReady( void );
 
-void UART6_WriteCallbackRegister( UART_CALLBACK callback, uintptr_t context );
-
-void UART6_ReadCallbackRegister( UART_CALLBACK callback, uintptr_t context );
+bool UART6_TransmitComplete( void );
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility

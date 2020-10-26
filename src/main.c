@@ -27,7 +27,8 @@
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include "definitions.h"                // SYS function prototypes
 
-
+#include "laserDescriptor.h"
+#include "laserStateMachines.h"
 // *****************************************************************************
 // *****************************************************************************
 // Section: Main Entry Point
@@ -38,10 +39,9 @@ int main ( void )
 {
     /* Initialize all modules */
     SYS_Initialize ( NULL );
+    
+    while (true) {
 
-    while ( true )
-    {
-        /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
     }
 
@@ -49,6 +49,8 @@ int main ( void )
 
     return ( EXIT_FAILURE );
 }
+
+
 
 
 /*******************************************************************************

@@ -13,6 +13,7 @@
 #include <xc.h> // include processor files - each processor file is guarded.  
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 typedef enum {
     UNINITIALISED = 0, //laser module unitialised
@@ -49,9 +50,9 @@ typedef struct {
     struct {
         communicationState state;
         uint8_t receiveCount;
-        void (*dataSend)(uint8_t); //UART send function
-        uint8_t(*dataReceive)(void); //UART receive function
-        bool (*dataAvailable) (void); //UART RX ready
+        size_t (*dataSend)(const uint8_t*, const size_t); //UART send function
+        size_t (*dataRead)(uint8_t*, const size_t); //UART read function
+        size_t (*dataAvailableCount) (void); //UART RX ready
         uint8_t databuffer[32];
     } comm;
 

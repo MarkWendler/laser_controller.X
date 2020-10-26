@@ -48,26 +48,25 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include "peripheral/can/plib_can1.h"
 #include "peripheral/clk/plib_clk.h"
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
 #include "peripheral/ocmp/plib_ocmp1.h"
 #include "peripheral/ocmp/plib_ocmp4.h"
-#include "peripheral/uart/plib_uart5.h"
 #include "peripheral/ocmp/plib_ocmp2.h"
-#include "peripheral/uart/plib_uart6.h"
+#include "peripheral/uart/plib_uart5.h"
 #include "peripheral/ocmp/plib_ocmp3.h"
+#include "peripheral/uart/plib_uart6.h"
 #include "peripheral/uart/plib_uart3.h"
 #include "peripheral/uart/plib_uart4.h"
 #include "peripheral/uart/plib_uart1.h"
 #include "peripheral/uart/plib_uart2.h"
 #include "peripheral/tmr/plib_tmr2.h"
-#include "driver/usart/drv_usart.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "system/int/sys_int.h"
-#include "system/dma/sys_dma.h"
 #include "osal/osal.h"
 #include "system/debug/sys_debug.h"
 #include "app.h"
@@ -192,9 +191,7 @@ Remarks:
         
 typedef struct
 {
-    SYS_MODULE_OBJ  drvUsart1;
-    SYS_MODULE_OBJ  drvUsart0;
-
+    char RESERVED;
 } SYSTEM_OBJECTS;
 
 // *****************************************************************************

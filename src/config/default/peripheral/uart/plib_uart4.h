@@ -69,27 +69,39 @@ void UART4_Initialize( void );
 
 bool UART4_SerialSetup( UART_SERIAL_SETUP *setup, uint32_t srcClkFreq );
 
-bool UART4_Write( void *buffer, const size_t size );
-
-bool UART4_Read( void *buffer, const size_t size );
-
 UART_ERROR UART4_ErrorGet( void );
 
 bool UART4_AutoBaudQuery( void );
 
 void UART4_AutoBaudSet( bool enable );
 
-bool UART4_ReadIsBusy( void );
+size_t UART4_Write(uint8_t* pWrBuffer, const size_t size );
 
-size_t UART4_ReadCountGet( void );
+size_t UART4_WriteCountGet(void);
 
-bool UART4_WriteIsBusy( void );
+size_t UART4_WriteFreeBufferCountGet(void);
 
-size_t UART4_WriteCountGet( void );
+size_t UART4_WriteBufferSizeGet(void);
 
-void UART4_WriteCallbackRegister( UART_CALLBACK callback, uintptr_t context );
+bool UART4_WriteNotificationEnable(bool isEnabled, bool isPersistent);
 
-void UART4_ReadCallbackRegister( UART_CALLBACK callback, uintptr_t context );
+void UART4_WriteThresholdSet(uint32_t nBytesThreshold);
+
+void UART4_WriteCallbackRegister( UART_RING_BUFFER_CALLBACK callback, uintptr_t context);
+
+size_t UART4_Read(uint8_t* pRdBuffer, const size_t size);
+
+size_t UART4_ReadCountGet(void);
+
+size_t UART4_ReadFreeBufferCountGet(void);
+
+size_t UART4_ReadBufferSizeGet(void);
+
+bool UART4_ReadNotificationEnable(bool isEnabled, bool isPersistent);
+
+void UART4_ReadThresholdSet(uint32_t nBytesThreshold);
+
+void UART4_ReadCallbackRegister( UART_RING_BUFFER_CALLBACK callback, uintptr_t context);
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility

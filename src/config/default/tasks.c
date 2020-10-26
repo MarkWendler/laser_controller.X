@@ -19,31 +19,6 @@
     "Tasks" functions to identify the instance of the module to maintain.
  *******************************************************************************/
 
-// DOM-IGNORE-BEGIN
-/*******************************************************************************
-* Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
-*
-* Subject to your compliance with these terms, you may use Microchip software
-* and any derivatives exclusively with Microchip products. It is your
-* responsibility to comply with third party license terms applicable to your
-* use of third party software (including open source software) that may
-* accompany Microchip software.
-*
-* THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
-* EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED
-* WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-* IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE,
-* INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND
-* WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS
-* BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE. TO THE
-* FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
-* ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
-* THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
- *******************************************************************************/
-// DOM-IGNORE-END
-
 // *****************************************************************************
 // *****************************************************************************
 // Section: Included Files
@@ -52,33 +27,20 @@
 
 #include "configuration.h"
 #include "definitions.h"
+#include "../../laserDescriptor.h"
+#include "../../laserStateMachines.h"
 
-
-// *****************************************************************************
 // *****************************************************************************
 // Section: RTOS "Tasks" Routine
 // *****************************************************************************
-// *****************************************************************************
 /* Handle for the APP_Tasks. */
-TaskHandle_t xAPP_Tasks;
+TaskHandle_t xLaser_1_Comm_Task, xLaser_2_Comm_Task, xLaser_3_Comm_Task, 
+        xLaser_4_Comm_Task, xLaser_5_Comm_Task, xLaser_6_Comm_Task;
 
-void _APP_Tasks(  void *pvParameters  )
-{   
-    while(1)
-    {
-        APP_Tasks();
-    }
-}
+extern LaserModule module_1, module_2, module_3, module_4,  module_5, module_6;
 
-
-
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: System "Tasks" Routine
-// *****************************************************************************
-// *****************************************************************************
-
+// Local functions
+void createCommTasks(void);
 /*******************************************************************************
   Function:
     void SYS_Tasks ( void )
@@ -88,34 +50,70 @@ void _APP_Tasks(  void *pvParameters  )
 */
 void SYS_Tasks ( void )
 {
-    /* Maintain system services */
-    
-
-    /* Maintain Device Drivers */
-    
-
-    /* Maintain Middleware & Other Libraries */
-    
-
     /* Maintain the application's state machine. */
         /* Create OS Thread for APP_Tasks. */
-    xTaskCreate((TaskFunction_t) _APP_Tasks,
-                "APP_Tasks",
-                1024,
-                NULL,
-                1,
-                &xAPP_Tasks);
 
-
-
-
-    /* Start RTOS Scheduler. */
     
      /**********************************************************************
      * Create all Threads for APP Tasks before starting FreeRTOS Scheduler *
      ***********************************************************************/
     vTaskStartScheduler(); /* This function never returns. */
 
+}
+
+void xLaserCommunication_Task( LaserModule  *pModule  )
+{   
+    while(1)
+    {
+        communicationTask(pModule);
+    }
+}
+
+/*
+ * Create all laser UART communication tasks
+ */
+void createCommTasks(void){
+        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+                "Laser_2_Comm_Task",
+                1024,
+                &module_2,
+                1,
+                &xLaser_2_Comm_Task);    
+    
+        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+                "Laser_2_Comm_Task",
+                1024,
+                &module_2,
+                1,
+                &xLaser_2_Comm_Task);
+
+        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+                "Laser_3_Comm_Task",
+                1024,
+                &module_3,
+                1,
+                &xLaser_3_Comm_Task);
+
+        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+                "Laser_4_Comm_Task",
+                1024,
+                &module_4,
+                1,
+                &xLaser_4_Comm_Task);
+
+        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+                "Laser_5_Comm_Task",
+                1024,
+                &module_5,
+                1,
+                &xLaser_5_Comm_Task);
+
+        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+                "Laser_6_Comm_Task",
+                1024,
+                &module_6,
+                1,
+                &xLaser_6_Comm_Task);    
 }
 
 /*******************************************************************************

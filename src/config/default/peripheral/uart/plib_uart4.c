@@ -47,7 +47,19 @@
 // *****************************************************************************
 // *****************************************************************************
 
-UART_OBJECT uart4Obj;
+UART_RING_BUFFER_OBJECT uart4Obj;
+
+#define UART4_READ_BUFFER_SIZE      128
+#define UART4_RX_INT_DISABLE()      IEC2CLR = _IEC2_U4RXIE_MASK;
+#define UART4_RX_INT_ENABLE()       IEC2SET = _IEC2_U4RXIE_MASK;
+
+static uint8_t UART4_ReadBuffer[UART4_READ_BUFFER_SIZE];
+
+#define UART4_WRITE_BUFFER_SIZE     128
+#define UART4_TX_INT_DISABLE()      IEC2CLR = _IEC2_U4TXIE_MASK;
+#define UART4_TX_INT_ENABLE()       IEC2SET = _IEC2_U4TXIE_MASK;
+
+static uint8_t UART4_WriteBuffer[UART4_WRITE_BUFFER_SIZE];
 
 void static UART4_ErrorClear( void )
 {
@@ -110,27 +122,31 @@ void UART4_Initialize( void )
     /* BAUD Rate register Setup */
     U4BRG = 32;
 
-    /* Disable Interrupts */
-    IEC2CLR = _IEC2_U4EIE_MASK;
-
-    IEC2CLR = _IEC2_U4RXIE_MASK;
-
     IEC2CLR = _IEC2_U4TXIE_MASK;
 
     /* Initialize instance object */
-    uart4Obj.rxBuffer = NULL;
-    uart4Obj.rxSize = 0;
-    uart4Obj.rxProcessedSize = 0;
-    uart4Obj.rxBusyStatus = false;
-    uart4Obj.rxCallback = NULL;
-    uart4Obj.txBuffer = NULL;
-    uart4Obj.txSize = 0;
-    uart4Obj.txProcessedSize = 0;
-    uart4Obj.txBusyStatus = false;
-    uart4Obj.txCallback = NULL;
+    uart4Obj.rdCallback = NULL;
+    uart4Obj.rdInIndex = 0;
+    uart4Obj.rdOutIndex = 0;
+    uart4Obj.isRdNotificationEnabled = false;
+    uart4Obj.isRdNotifyPersistently = false;
+    uart4Obj.rdThreshold = 0;
+
+    uart4Obj.wrCallback = NULL;
+    uart4Obj.wrInIndex = 0;
+    uart4Obj.wrOutIndex = 0;
+    uart4Obj.isWrNotificationEnabled = false;
+    uart4Obj.isWrNotifyPersistently = false;
+    uart4Obj.wrThreshold = 0;
 
     /* Turn ON UART4 */
     U4MODESET = _U4MODE_ON_MASK;
+
+    /* Enable UART4_FAULT Interrupt */
+    IEC2SET = _IEC2_U4EIE_MASK;
+
+    /* Enable UART4_RX Interrupt */
+    IEC2SET = _IEC2_U4RXIE_MASK;
 }
 
 bool UART4_SerialSetup( UART_SERIAL_SETUP *setup, uint32_t srcClkFreq )
@@ -141,12 +157,6 @@ bool UART4_SerialSetup( UART_SERIAL_SETUP *setup, uint32_t srcClkFreq )
     uint32_t brgValLow = 0;
     uint32_t brgVal = 0;
     uint32_t uartMode;
-
-    if((uart4Obj.rxBusyStatus == true) || (uart4Obj.txBusyStatus == true))
-    {
-        /* Transaction is in progress, so return without updating settings */
-        return status;
-    }
 
     if (setup != NULL)
     {
@@ -216,65 +226,337 @@ bool UART4_SerialSetup( UART_SERIAL_SETUP *setup, uint32_t srcClkFreq )
     return status;
 }
 
-bool UART4_Read(void* buffer, const size_t size )
+/* This routine is only called from ISR. Hence do not disable/enable USART interrupts. */
+static inline bool UART4_RxPushByte(uint8_t rdByte)
 {
-    bool status = false;
-    uint8_t* lBuffer = (uint8_t* )buffer;
+    uint32_t tempInIndex;
+    bool isSuccess = false;
 
-    if(lBuffer != NULL)
+    tempInIndex = uart4Obj.rdInIndex + 1;
+
+    if (tempInIndex >= UART4_READ_BUFFER_SIZE)
     {
-        /* Check if receive request is in progress */
-        if(uart4Obj.rxBusyStatus == false)
+        tempInIndex = 0;
+    }
+
+    if (tempInIndex == uart4Obj.rdOutIndex)
+    {
+        /* Queue is full - Report it to the application. Application gets a chance to free up space by reading data out from the RX ring buffer */
+        if(uart4Obj.rdCallback != NULL)
         {
-            /* Clear errors before submitting the request.
-             * ErrorGet clears errors internally. */
-            UART4_ErrorGet();
+            uart4Obj.rdCallback(UART_EVENT_READ_BUFFER_FULL, uart4Obj.rdContext);
 
-            uart4Obj.rxBuffer = lBuffer;
-            uart4Obj.rxSize = size;
-            uart4Obj.rxProcessedSize = 0;
-            uart4Obj.rxBusyStatus = true;
-            status = true;
+            /* Read the indices again in case application has freed up space in RX ring buffer */
+            tempInIndex = uart4Obj.rdInIndex + 1;
 
-            /* Enable UART4_FAULT Interrupt */
-            IEC2SET = _IEC2_U4EIE_MASK;
-
-            /* Enable UART4_RX Interrupt */
-            IEC2SET = _IEC2_U4RXIE_MASK;
+            if (tempInIndex >= UART4_READ_BUFFER_SIZE)
+            {
+                tempInIndex = 0;
+            }
         }
     }
 
-    return status;
+    if (tempInIndex != uart4Obj.rdOutIndex)
+    {
+        UART4_ReadBuffer[uart4Obj.rdInIndex] = rdByte;
+        uart4Obj.rdInIndex = tempInIndex;
+        isSuccess = true;
+    }
+    else
+    {
+        /* Queue is full. Data will be lost. */
+    }
+
+    return isSuccess;
 }
 
-bool UART4_Write( void* buffer, const size_t size )
+/* This routine is only called from ISR. Hence do not disable/enable USART interrupts. */
+static void UART4_ReadNotificationSend(void)
 {
-    bool status = false;
-    uint8_t* lBuffer = (uint8_t*)buffer;
+    uint32_t nUnreadBytesAvailable;
 
-    if(lBuffer != NULL)
+    if (uart4Obj.isRdNotificationEnabled == true)
     {
-        /* Check if transmit request is in progress */
-        if(uart4Obj.txBusyStatus == false)
+        nUnreadBytesAvailable = UART4_ReadCountGet();
+
+        if(uart4Obj.rdCallback != NULL)
         {
-            uart4Obj.txBuffer = lBuffer;
-            uart4Obj.txSize = size;
-            uart4Obj.txProcessedSize = 0;
-            uart4Obj.txBusyStatus = true;
-            status = true;
-
-            /* Initiate the transfer by sending first byte */
-            if(!(U4STA & _U4STA_UTXBF_MASK))
+            if (uart4Obj.isRdNotifyPersistently == true)
             {
-                U4TXREG = *lBuffer;
-                uart4Obj.txProcessedSize++;
+                if (nUnreadBytesAvailable >= uart4Obj.rdThreshold)
+                {
+                    uart4Obj.rdCallback(UART_EVENT_READ_THRESHOLD_REACHED, uart4Obj.rdContext);
+                }
             }
+            else
+            {
+                if (nUnreadBytesAvailable == uart4Obj.rdThreshold)
+                {
+                    uart4Obj.rdCallback(UART_EVENT_READ_THRESHOLD_REACHED, uart4Obj.rdContext);
+                }
+            }
+        }
+    }
+}
 
-            IEC2SET = _IEC2_U4TXIE_MASK;
+size_t UART4_Read(uint8_t* pRdBuffer, const size_t size)
+{
+    size_t nBytesRead = 0;
+    uint32_t rdOutIndex;
+    uint32_t rdInIndex;
+
+    while (nBytesRead < size)
+    {
+        UART4_RX_INT_DISABLE();
+
+        rdOutIndex = uart4Obj.rdOutIndex;
+        rdInIndex = uart4Obj.rdInIndex;
+
+        if (rdOutIndex != rdInIndex)
+        {
+            pRdBuffer[nBytesRead++] = UART4_ReadBuffer[uart4Obj.rdOutIndex++];
+
+            if (uart4Obj.rdOutIndex >= UART4_READ_BUFFER_SIZE)
+            {
+                uart4Obj.rdOutIndex = 0;
+            }
+            UART4_RX_INT_ENABLE();
+        }
+        else
+        {
+            UART4_RX_INT_ENABLE();
+            break;
         }
     }
 
-    return status;
+    return nBytesRead;
+}
+
+size_t UART4_ReadCountGet(void)
+{
+    size_t nUnreadBytesAvailable;
+    uint32_t rdInIndex;
+    uint32_t rdOutIndex;
+
+    /* Take a snapshot of indices to avoid creation of critical section */
+    rdInIndex = uart4Obj.rdInIndex;
+    rdOutIndex = uart4Obj.rdOutIndex;
+
+    if ( rdInIndex >=  rdOutIndex)
+    {
+        nUnreadBytesAvailable =  rdInIndex -  rdOutIndex;
+    }
+    else
+    {
+        nUnreadBytesAvailable =  (UART4_READ_BUFFER_SIZE -  rdOutIndex) + rdInIndex;
+    }
+
+    return nUnreadBytesAvailable;
+}
+
+size_t UART4_ReadFreeBufferCountGet(void)
+{
+    return (UART4_READ_BUFFER_SIZE - 1) - UART4_ReadCountGet();
+}
+
+size_t UART4_ReadBufferSizeGet(void)
+{
+    return (UART4_READ_BUFFER_SIZE - 1);
+}
+
+bool UART4_ReadNotificationEnable(bool isEnabled, bool isPersistent)
+{
+    bool previousStatus = uart4Obj.isRdNotificationEnabled;
+
+    uart4Obj.isRdNotificationEnabled = isEnabled;
+
+    uart4Obj.isRdNotifyPersistently = isPersistent;
+
+    return previousStatus;
+}
+
+void UART4_ReadThresholdSet(uint32_t nBytesThreshold)
+{
+    if (nBytesThreshold > 0)
+    {
+        uart4Obj.rdThreshold = nBytesThreshold;
+    }
+}
+
+void UART4_ReadCallbackRegister( UART_RING_BUFFER_CALLBACK callback, uintptr_t context)
+{
+    uart4Obj.rdCallback = callback;
+
+    uart4Obj.rdContext = context;
+}
+
+/* This routine is only called from ISR. Hence do not disable/enable USART interrupts. */
+static bool UART4_TxPullByte(uint8_t* pWrByte)
+{
+    bool isSuccess = false;
+    uint32_t wrOutIndex = uart4Obj.wrOutIndex;
+    uint32_t wrInIndex = uart4Obj.wrInIndex;
+
+    if (wrOutIndex != wrInIndex)
+    {
+        *pWrByte = UART4_WriteBuffer[uart4Obj.wrOutIndex++];
+
+        if (uart4Obj.wrOutIndex >= UART4_WRITE_BUFFER_SIZE)
+        {
+            uart4Obj.wrOutIndex = 0;
+        }
+        isSuccess = true;
+    }
+
+    return isSuccess;
+}
+
+static inline bool UART4_TxPushByte(uint8_t wrByte)
+{
+    uint32_t tempInIndex;
+    bool isSuccess = false;
+
+    tempInIndex = uart4Obj.wrInIndex + 1;
+
+    if (tempInIndex >= UART4_WRITE_BUFFER_SIZE)
+    {
+        tempInIndex = 0;
+    }
+    if (tempInIndex != uart4Obj.wrOutIndex)
+    {
+        UART4_WriteBuffer[uart4Obj.wrInIndex] = wrByte;
+        uart4Obj.wrInIndex = tempInIndex;
+        isSuccess = true;
+    }
+    else
+    {
+        /* Queue is full. Report Error. */
+    }
+
+    return isSuccess;
+}
+
+/* This routine is only called from ISR. Hence do not disable/enable USART interrupts. */
+static void UART4_WriteNotificationSend(void)
+{
+    uint32_t nFreeWrBufferCount;
+
+    if (uart4Obj.isWrNotificationEnabled == true)
+    {
+        nFreeWrBufferCount = UART4_WriteFreeBufferCountGet();
+
+        if(uart4Obj.wrCallback != NULL)
+        {
+            if (uart4Obj.isWrNotifyPersistently == true)
+            {
+                if (nFreeWrBufferCount >= uart4Obj.wrThreshold)
+                {
+                    uart4Obj.wrCallback(UART_EVENT_WRITE_THRESHOLD_REACHED, uart4Obj.wrContext);
+                }
+            }
+            else
+            {
+                if (nFreeWrBufferCount == uart4Obj.wrThreshold)
+                {
+                    uart4Obj.wrCallback(UART_EVENT_WRITE_THRESHOLD_REACHED, uart4Obj.wrContext);
+                }
+            }
+        }
+    }
+}
+
+static size_t UART4_WritePendingBytesGet(void)
+{
+    size_t nPendingTxBytes;
+
+    /* Take a snapshot of indices to avoid creation of critical section */
+    uint32_t wrOutIndex = uart4Obj.wrOutIndex;
+    uint32_t wrInIndex = uart4Obj.wrInIndex;
+
+    if ( wrInIndex >=  wrOutIndex)
+    {
+        nPendingTxBytes =  wrInIndex -  wrOutIndex;
+    }
+    else
+    {
+        nPendingTxBytes =  (UART4_WRITE_BUFFER_SIZE -  wrOutIndex) + wrInIndex;
+    }
+
+    return nPendingTxBytes;
+}
+
+size_t UART4_WriteCountGet(void)
+{
+    size_t nPendingTxBytes;
+
+    nPendingTxBytes = UART4_WritePendingBytesGet();
+
+    return nPendingTxBytes;
+}
+
+size_t UART4_Write(uint8_t* pWrBuffer, const size_t size )
+{
+    size_t nBytesWritten  = 0;
+
+    UART4_TX_INT_DISABLE();
+
+    while (nBytesWritten < size)
+    {
+        if (UART4_TxPushByte(pWrBuffer[nBytesWritten]) == true)
+        {
+            nBytesWritten++;
+        }
+        else
+        {
+            /* Queue is full, exit the loop */
+            break;
+        }
+    }
+
+    /* Check if any data is pending for transmission */
+    if (UART4_WritePendingBytesGet() > 0)
+    {
+        /* Enable TX interrupt as data is pending for transmission */
+        UART4_TX_INT_ENABLE();
+    }
+
+    return nBytesWritten;
+}
+
+size_t UART4_WriteFreeBufferCountGet(void)
+{
+    return (UART4_WRITE_BUFFER_SIZE - 1) - UART4_WriteCountGet();
+}
+
+size_t UART4_WriteBufferSizeGet(void)
+{
+    return (UART4_WRITE_BUFFER_SIZE - 1);
+}
+
+bool UART4_WriteNotificationEnable(bool isEnabled, bool isPersistent)
+{
+    bool previousStatus = uart4Obj.isWrNotificationEnabled;
+
+    uart4Obj.isWrNotificationEnabled = isEnabled;
+
+    uart4Obj.isWrNotifyPersistently = isPersistent;
+
+    return previousStatus;
+}
+
+void UART4_WriteThresholdSet(uint32_t nBytesThreshold)
+{
+    if (nBytesThreshold > 0)
+    {
+        uart4Obj.wrThreshold = nBytesThreshold;
+    }
+}
+
+void UART4_WriteCallbackRegister( UART_RING_BUFFER_CALLBACK callback, uintptr_t context)
+{
+    uart4Obj.wrCallback = callback;
+
+    uart4Obj.wrContext = context;
 }
 
 UART_ERROR UART4_ErrorGet( void )
@@ -312,121 +594,71 @@ void UART4_AutoBaudSet( bool enable )
        direction of control is not allowed in this function.                      */
 }
 
-void UART4_ReadCallbackRegister( UART_CALLBACK callback, uintptr_t context )
-{
-    uart4Obj.rxCallback = callback;
-
-    uart4Obj.rxContext = context;
-}
-
-bool UART4_ReadIsBusy( void )
-{
-    return uart4Obj.rxBusyStatus;
-}
-
-size_t UART4_ReadCountGet( void )
-{
-    return uart4Obj.rxProcessedSize;
-}
-
-void UART4_WriteCallbackRegister( UART_CALLBACK callback, uintptr_t context )
-{
-    uart4Obj.txCallback = callback;
-
-    uart4Obj.txContext = context;
-}
-
-bool UART4_WriteIsBusy( void )
-{
-    return uart4Obj.txBusyStatus;
-}
-
-size_t UART4_WriteCountGet( void )
-{
-    return uart4Obj.txProcessedSize;
-}
-
 void UART4_FAULT_InterruptHandler (void)
 {
-    /* Clear size and rx status */
-    uart4Obj.rxBusyStatus = false;
-
     /* Disable the fault interrupt */
     IEC2CLR = _IEC2_U4EIE_MASK;
     /* Disable the receive interrupt */
     IEC2CLR = _IEC2_U4RXIE_MASK;
 
     /* Client must call UARTx_ErrorGet() function to clear the errors */
-    if( uart4Obj.rxCallback != NULL )
+    if( uart4Obj.rdCallback != NULL )
     {
-        uart4Obj.rxCallback(uart4Obj.rxContext);
+        uart4Obj.rdCallback(UART_EVENT_READ_ERROR, uart4Obj.rdContext);
     }
 }
 
 void UART4_RX_InterruptHandler (void)
 {
-    if(uart4Obj.rxBusyStatus == true)
+    /* Clear UART4 RX Interrupt flag */
+    IFS2CLR = _IFS2_U4RXIF_MASK;
+
+    /* Keep reading until there is a character availabe in the RX FIFO */
+    while((U4STA & _U4STA_URXDA_MASK) == _U4STA_URXDA_MASK)
     {
-        /* Clear UART4 RX Interrupt flag */
-        IFS2CLR = _IFS2_U4RXIF_MASK;
-
-        while((_U4STA_URXDA_MASK == (U4STA & _U4STA_URXDA_MASK)) && (uart4Obj.rxSize > uart4Obj.rxProcessedSize) )
+        if (UART4_RxPushByte( (uint8_t )(U4RXREG) ) == true)
         {
-            uart4Obj.rxBuffer[uart4Obj.rxProcessedSize++] = (uint8_t )(U4RXREG);
+            UART4_ReadNotificationSend();
         }
-
-        /* Check if the buffer is done */
-        if(uart4Obj.rxProcessedSize >= uart4Obj.rxSize)
+        else
         {
-            uart4Obj.rxBusyStatus = false;
-
-            /* Disable the receive interrupt */
-            IEC2CLR = _IEC2_U4RXIE_MASK;
-
-            if(uart4Obj.rxCallback != NULL)
-            {
-                uart4Obj.rxCallback(uart4Obj.rxContext);
-            }
+            /* UART RX buffer is full */
         }
-    }
-    else
-    {
-        // Nothing to process
-        ;
     }
 }
 
 void UART4_TX_InterruptHandler (void)
 {
-    if(uart4Obj.txBusyStatus == true)
+    uint8_t wrByte;
+
+    /* Check if any data is pending for transmission */
+    if (UART4_WritePendingBytesGet() > 0)
     {
         /* Clear UART4TX Interrupt flag */
         IFS2CLR = _IFS2_U4TXIF_MASK;
 
-        while((!(U4STA & _U4STA_UTXBF_MASK)) && (uart4Obj.txSize > uart4Obj.txProcessedSize) )
+        /* Keep writing to the TX FIFO as long as there is space */
+        while(!(U4STA & _U4STA_UTXBF_MASK))
         {
-            U4TXREG = uart4Obj.txBuffer[uart4Obj.txProcessedSize++];
-        }
-
-        /* Check if the buffer is done */
-        if(uart4Obj.txProcessedSize >= uart4Obj.txSize)
-        {
-            uart4Obj.txBusyStatus = false;
-
-            /* Disable the transmit interrupt, to avoid calling ISR continuously */
-            IEC2CLR = _IEC2_U4TXIE_MASK;
-
-            if(uart4Obj.txCallback != NULL)
+            if (UART4_TxPullByte(&wrByte) == true)
             {
-                uart4Obj.txCallback(uart4Obj.txContext);
+                U4TXREG = wrByte;
+
+                /* Send notification */
+                UART4_WriteNotificationSend();
+            }
+            else
+            {
+                /* Nothing to transmit. Disable the data register empty interrupt. */
+                UART4_TX_INT_DISABLE();
+                break;
             }
         }
-    }
+	}
     else
     {
-        // Nothing to process
-        ;
+        /* Nothing to transmit. Disable the data register empty interrupt. */
+        UART4_TX_INT_DISABLE();
     }
 }
-
 
