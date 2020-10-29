@@ -29,9 +29,11 @@
  */
 #include "laserDescriptor.h"
 
+/**
+ * @parameter pvParameter pointer to LaserModule instance
+ */
 
-
-void communicationTask(LaserModule *module);
+void vLaserCommTask(void* pvParameter); //LaserModule
 
 #endif /* _EXAMPLE_FILE_NAME_H */
 

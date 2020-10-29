@@ -27,13 +27,10 @@ typedef enum {
 typedef enum {
     COMM_UNINITIALISED = 0, //laser module unitialised
     SEND_INIT, //laser module communication OK and waiting to start measure
-    WAIT_INIT_ANSWER,    // Laser module
     SEND_START_MEASURE,  //Module is calibrating
-    WAIT_START_FEEDBACK,
     WAIT_MEASURE_DATA,
     READ_DISTANCE, //process measured data
     SEND_STOP_MEASURE,
-    WAIT_STOP_FEEDBACK,
     SEND_LASER_STRENGTH,
     WAIT_STRENGTH_FEEDBACK,
     SEND_LASER_STRENGTH2,

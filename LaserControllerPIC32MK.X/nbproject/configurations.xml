@@ -110,7 +110,7 @@
       <itemPath>../src/app.h</itemPath>
       <itemPath>../src/laserCommands.h</itemPath>
       <itemPath>../src/laserDescriptor.h</itemPath>
-      <itemPath>../src/laserStateMachines.h</itemPath>
+      <itemPath>../src/laserCommSM.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"

@@ -28,7 +28,7 @@
 #include "configuration.h"
 #include "definitions.h"
 #include "../../laserDescriptor.h"
-#include "../../laserStateMachines.h"
+#include "../../laserCommSM.h"
 
 // *****************************************************************************
 // Section: RTOS "Tasks" Routine
@@ -61,57 +61,49 @@ void SYS_Tasks ( void )
 
 }
 
-void xLaserCommunication_Task( LaserModule  *pModule  )
-{   
-    while(1)
-    {
-        communicationTask(pModule);
-    }
-}
-
 /*
  * Create all laser UART communication tasks
  */
 void createCommTasks(void){
-        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
-                "Laser_2_Comm_Task",
+        xTaskCreate((TaskFunction_t) vLaserCommTask,
+                "Laser_1_Comm_Task",
                 1024,
-                &module_2,
+                (void*)&module_1,
                 1,
                 &xLaser_2_Comm_Task);    
     
-        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+        xTaskCreate((TaskFunction_t) vLaserCommTask,
                 "Laser_2_Comm_Task",
                 1024,
-                &module_2,
+                (void*)&module_2,
                 1,
                 &xLaser_2_Comm_Task);
 
-        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+        xTaskCreate((TaskFunction_t) vLaserCommTask,
                 "Laser_3_Comm_Task",
                 1024,
-                &module_3,
+                (void*)&module_3,
                 1,
                 &xLaser_3_Comm_Task);
 
-        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+        xTaskCreate((TaskFunction_t) vLaserCommTask,
                 "Laser_4_Comm_Task",
                 1024,
-                &module_4,
+                (void*)&module_4,
                 1,
                 &xLaser_4_Comm_Task);
 
-        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+        xTaskCreate((TaskFunction_t) vLaserCommTask,
                 "Laser_5_Comm_Task",
                 1024,
-                &module_5,
+                (void*)&module_5,
                 1,
                 &xLaser_5_Comm_Task);
 
-        xTaskCreate((TaskFunction_t) xLaserCommunication_Task,
+        xTaskCreate((TaskFunction_t) vLaserCommTask,
                 "Laser_6_Comm_Task",
                 1024,
-                &module_6,
+                (void*)&module_6,
                 1,
                 &xLaser_6_Comm_Task);    
 }

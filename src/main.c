@@ -28,7 +28,6 @@
 #include "definitions.h"                // SYS function prototypes
 
 #include "laserDescriptor.h"
-#include "laserStateMachines.h"
 // *****************************************************************************
 // *****************************************************************************
 // Section: Main Entry Point
