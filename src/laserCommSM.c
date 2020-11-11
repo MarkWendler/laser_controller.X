@@ -19,8 +19,8 @@
 void vLaserCommTask(void *pvParameter) {
 
     //Use local state?
-    LaserModule *module = (LaserModule*) pvParameter;
-    communicationState eCommState = COMM_UNINITIALISED;
+    LaserCommunication_t *module = (LaserCommunication_t*) pvParameter;
+    commState eCommState = COMM_UNINITIALISED;
     
     while (1) {
 
@@ -31,16 +31,14 @@ void vLaserCommTask(void *pvParameter) {
                 break;
 
             case SEND_INIT: //laser module communication OK and waiting to start measure
-                module->comm.dataSend(commandsSend.open, LENGTH_STANDARD);
-                module->comm.receiveCount = 0; //clear received data counter
+                module->dataSend(commandsSend.open, LENGTH_STANDARD);
+                module->receiveCount = 0; //clear received data counter
                 vTaskDelay(pdMS_TO_TICKS(2)); //wait for answer (After 2 ms should be arrived)
-                if (module->comm.dataAvailableCount() >= OPEN_ANSWER_LENGTH) { // read data from buffer
-                    module->comm.dataRead(module->comm.databuffer, OPEN_ANSWER_LENGTH);
+                if (module->dataAvailableCount() >= OPEN_ANSWER_LENGTH) { // read data from buffer
+                    module->dataRead(module->databuffer, OPEN_ANSWER_LENGTH);
 
                     //TODO Compare, but for testing we just go forward.
                     eCommState = IDLE;
-                    // MODULE state change to initialised
-                    module->state = INITIALISED_OFF;
                 }else {
                     //No answer--> No Module connected
                     vTaskDelay(pdMS_TO_TICKS(1000)); //wait 1000ms before retry
@@ -49,14 +47,14 @@ void vLaserCommTask(void *pvParameter) {
                 break;
 
             case SEND_START_MEASURE: //Module is calibrating
-                module->comm.dataSend(commandsSend.startContinuousMeas, LENGTH_STANDARD);
+                module->dataSend(commandsSend.startContinuousMeas, LENGTH_STANDARD);
                 
                 vTaskDelay(pdMS_TO_TICKS(1)); //wait for answer (After 1 ms should be arrived)
 
-                if (module->comm.dataAvailableCount() >= OPEN_ANSWER_LENGTH) { // read data from buffer
-                    module->comm.dataRead(module->comm.databuffer, OPEN_ANSWER_LENGTH);
+                if (module->dataAvailableCount() >= OPEN_ANSWER_LENGTH) { // read data from buffer
+                    module->dataRead(module->databuffer, OPEN_ANSWER_LENGTH);
                     //TODO Compare, but for testing we just go forward.
-                    module->comm.state = WAIT_MEASURE_DATA;
+                    module->state = WAIT_MEASURE_DATA;
                     // MODULE state change to initialised
                     eCommState = MEASURE;
                 }
@@ -70,11 +68,13 @@ void vLaserCommTask(void *pvParameter) {
                 break;
 
             case WAIT_MEASURE_DATA:
-                if (module->comm.dataAvailableCount() >= MEASURE_DATA_LENGTH) { // read data from buffer
-                    module->comm.dataRead(module->comm.databuffer, MEASURE_DATA_LENGTH);
+                if (module->dataAvailableCount() >= MEASURE_DATA_LENGTH) { // read data from buffer
+                    module->dataRead(module->databuffer, MEASURE_DATA_LENGTH);
                     //TODO Compare, but for testing we just go forward.
                     eCommState = READ_DISTANCE;
                 }
+                // No message yet. Wait
+                vTaskDelay(pdMS_TO_TICKS(1));
                 break;
 
             case READ_DISTANCE: //Process measured data
@@ -85,17 +85,20 @@ void vLaserCommTask(void *pvParameter) {
                 break;
 
             case SEND_STOP_MEASURE:
-                module->comm.dataSend(commandsSend.stopMeasure, LENGTH_STANDARD);
-                eCommState = WAIT_STOP_FEEDBACK;
-                break;
-
-            case WAIT_STOP_FEEDBACK:
-                if (module->comm.dataAvailableCount() >= OPEN_ANSWER_LENGTH) { // read data from buffer
-                    module->comm.dataRead(module->comm.databuffer, OPEN_ANSWER_LENGTH);
+                module->dataSend(commandsSend.stopMeasure, LENGTH_STANDARD);
+                
+                vTaskDelay(pdMS_TO_TICKS(1)); //wait for answer (After 1 ms should be arrived)
+                
+                if (module->dataAvailableCount() >= OPEN_ANSWER_LENGTH) { // read data from buffer
+                    module->dataRead(module->databuffer, OPEN_ANSWER_LENGTH);
                     //TODO Compare, but for testing we just go forward.
                     eCommState = IDLE;
-                    // MODULE state change to initialised
-                    module->state = INITIALISED_OFF;
+                }
+                else{
+                    //No answer--> No Module connected
+                    vTaskDelay(pdMS_TO_TICKS(1000)); //wait 1000ms before reset
+                    eCommState = COMM_UNINITIALISED;
+                    //TODO send error message                    
                 }
                 break;
             case IDLE: //No communication ongoing

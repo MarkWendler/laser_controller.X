@@ -4,72 +4,122 @@
 #include "laserDescriptor.h"
 //************************************//
 // Laser object instances //
-volatile LaserModule module_1 = { 
-    .ID = 1,
-    .state = UNINITIALISED,
-    .distance = 0,
-    
-    .comm = {
+volatile LaserModule_t module_1 = {
+    .ctrl =
+    {
+        .ID = 1,
+        .state = UNINITIALISED
+    },
+    .comm =
+    {
         .state = COMM_UNINITIALISED,
         .receiveCount = 0,
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
+    },
+    .canAttributes =
+    {
+        .ID = 1
     }
 };
-// Laser module 2
-volatile LaserModule module_2 = { 
-    .ID = 1,
-    .state = UNINITIALISED,
-    .distance = 0,
-    
-    .comm = {
+
+volatile LaserModule_t module_2 = {
+    .ctrl =
+    {
+        .ID = 2,
+        .state = UNINITIALISED
+    },
+    .comm =
+    {
         .state = COMM_UNINITIALISED,
         .receiveCount = 0,
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
+    },
+    .canAttributes =
+    {
+        .ID = 2
     }
 };
-// Laser module 3
-volatile LaserModule module_3 = { 
-    .ID = 1,
-    .state = UNINITIALISED,
-    .distance = 0,
-    
-    .comm = {
+
+volatile LaserModule_t module_3 = {
+    .ctrl =
+    {
+        .ID = 3,
+        .state = UNINITIALISED
+    },
+    .comm =
+    {
         .state = COMM_UNINITIALISED,
         .receiveCount = 0,
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
+    },
+    .canAttributes =
+    {
+        .ID = 3
     }
 };
-// Laser module 4
-volatile LaserModule module_4 = { 
-    .ID = 1,
-    .state = UNINITIALISED,
-    .distance = 0,
-    
-    .comm = {
+
+volatile LaserModule_t module_4 = {
+    .ctrl =
+    {
+        .ID = 4,
+        .state = UNINITIALISED
+    },
+    .comm =
+    {
         .state = COMM_UNINITIALISED,
         .receiveCount = 0,
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
+    },
+    .canAttributes =
+    {
+        .ID = 4
     }
 };
-// Laser module 5
-volatile LaserModule module_5 = { 
-    .ID = 1,
-    .state = UNINITIALISED,
-    .distance = 0,
-    
-    .comm = {
+
+volatile LaserModule_t module_5 = {
+    .ctrl =
+    {
+        .ID = 5,
+        .state = UNINITIALISED
+    },
+    .comm =
+    {
         .state = COMM_UNINITIALISED,
         .receiveCount = 0,
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
+    },
+    .canAttributes =
+    {
+        .ID = 5
+    }
+};
+
+volatile LaserModule_t module_6 = {
+    .ctrl =
+    {
+        .ID = 6,
+        .state = UNINITIALISED
+    },
+    .comm =
+    {
+        .state = COMM_UNINITIALISED,
+        .receiveCount = 0,
+        .dataSend = UART1_Write, //hook the corresponding communication function
+        .dataRead = UART1_Read,
+        .dataAvailableCount = UART1_ReadCountGet
+    },
+    .canAttributes =
+    {
+        .ID = 6
     }
 };

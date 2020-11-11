@@ -28,7 +28,7 @@ int global_data;
 /**
  * @param length Size of the array that must be sent
  */
-void moduleControlTask(LaserModule *module) {
+void moduleControlTask(LaserCtrl_t *module) {
     switch (module->state) {
         case UNINITIALISED:
             //TODO for now we just wait the communication task start the initialisation

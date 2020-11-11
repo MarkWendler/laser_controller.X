@@ -14,12 +14,6 @@
 #include <stdint.h>
 #include "laserDescriptor.h"
 
-void taskModule (LaserModule *module);
-
-void activateLaser (LaserModule *module);
-void deactivateLaser (LaserModule *module);
-//void setLaserStrength (LaserModule *module); // Not supported for now
-
 #define LENGTH_STANDARD 16
 #define OPEN_ANSWER_LENGTH 16
 #define MEASURE_DATA_LENGTH 24
