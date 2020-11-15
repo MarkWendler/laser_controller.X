@@ -75,7 +75,7 @@ bool UART1_AutoBaudQuery( void );
 
 void UART1_AutoBaudSet( bool enable );
 
-size_t UART1_Write(const uint8_t* pWrBuffer, const size_t size );
+size_t UART1_Write(uint8_t* pWrBuffer, const size_t size );
 
 size_t UART1_WriteCountGet(void);
 

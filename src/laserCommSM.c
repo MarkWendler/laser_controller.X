@@ -3,7 +3,6 @@
  * 
  * Implements the laserModule object logic and behavior
  * 
- * @param module
  */
 
 

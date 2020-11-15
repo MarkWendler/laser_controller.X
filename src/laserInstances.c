@@ -17,10 +17,6 @@ volatile LaserModule_t module_1 = {
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
-    },
-    .canAttributes =
-    {
-        .ID = 1
     }
 };
 
@@ -37,10 +33,6 @@ volatile LaserModule_t module_2 = {
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
-    },
-    .canAttributes =
-    {
-        .ID = 2
     }
 };
 
@@ -57,10 +49,6 @@ volatile LaserModule_t module_3 = {
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
-    },
-    .canAttributes =
-    {
-        .ID = 3
     }
 };
 
@@ -77,10 +65,6 @@ volatile LaserModule_t module_4 = {
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
-    },
-    .canAttributes =
-    {
-        .ID = 4
     }
 };
 
@@ -97,10 +81,6 @@ volatile LaserModule_t module_5 = {
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
-    },
-    .canAttributes =
-    {
-        .ID = 5
     }
 };
 
@@ -117,9 +97,5 @@ volatile LaserModule_t module_6 = {
         .dataSend = UART1_Write, //hook the corresponding communication function
         .dataRead = UART1_Read,
         .dataAvailableCount = UART1_ReadCountGet
-    },
-    .canAttributes =
-    {
-        .ID = 6
     }
 };

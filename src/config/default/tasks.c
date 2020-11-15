@@ -1,21 +1,22 @@
 /*******************************************************************************
- System Interrupts File
-
-  Company:
-    Microchip Technology Inc.
+ System Tasks File
 
   File Name:
-    interrupt.c
+    tasks.c
 
   Summary:
-    Interrupt vectors mapping
+    This file contains source code necessary to maintain system's polled tasks.
 
   Description:
-    This file maps all the interrupt vectors to their corresponding
-    implementations. If a particular module interrupt is used, then its ISR
-    definition can be found in corresponding PLIB source file. If a module
-    interrupt is not used, then its ISR implementation is mapped to dummy
-    handler.
+    This file contains source code necessary to maintain system's polled tasks.
+    It implements the "SYS_Tasks" function that calls the individual "Tasks"
+    functions for all polled MPLAB Harmony modules in the system.
+
+  Remarks:
+    This file requires access to the systemObjects global data structure that
+    contains the object handles to all MPLAB Harmony module objects executing
+    polled in the system.  These handles are passed into the individual module
+    "Tasks" functions to identify the instance of the module to maintain.
  *******************************************************************************/
 
 // DOM-IGNORE-BEGIN
@@ -52,124 +53,72 @@
 #include "configuration.h"
 #include "definitions.h"
 
+
 // *****************************************************************************
 // *****************************************************************************
-// Section: System Interrupt Vector Functions
+// Section: RTOS "Tasks" Routine
+// *****************************************************************************
+// *****************************************************************************
+/* Handle for the APP_Tasks. */
+TaskHandle_t xAPP_Tasks;
+
+void _APP_Tasks(  void *pvParameters  )
+{   
+    while(1)
+    {
+        APP_Tasks();
+    }
+}
+
+
+
+
+// *****************************************************************************
+// *****************************************************************************
+// Section: System "Tasks" Routine
 // *****************************************************************************
 // *****************************************************************************
 
+/*******************************************************************************
+  Function:
+    void SYS_Tasks ( void )
 
-void TIMER_2_InterruptHandler( void );
-void UART1_FAULT_InterruptHandler( void );
-void UART1_RX_InterruptHandler( void );
-void UART1_TX_InterruptHandler( void );
-void UART2_FAULT_InterruptHandler( void );
-void UART2_RX_InterruptHandler( void );
-void UART2_TX_InterruptHandler( void );
-void UART3_FAULT_InterruptHandler( void );
-void UART3_RX_InterruptHandler( void );
-void UART3_TX_InterruptHandler( void );
-void UART4_FAULT_InterruptHandler( void );
-void UART4_RX_InterruptHandler( void );
-void UART4_TX_InterruptHandler( void );
-void UART5_FAULT_InterruptHandler( void );
-void UART5_RX_InterruptHandler( void );
-void UART5_TX_InterruptHandler( void );
-void CAN1_InterruptHandler( void );
-
-
-
-/* All the handlers are defined here.  Each will call its PLIB-specific function. */
-
-
-void TIMER_2_Handler (void)
+  Remarks:
+    See prototype in system/common/sys_module.h.
+*/
+void SYS_Tasks ( void )
 {
-    TIMER_2_InterruptHandler();
+    /* Maintain system services */
+    
+
+    /* Maintain Device Drivers */
+    
+
+    /* Maintain Middleware & Other Libraries */
+    
+
+    /* Maintain the application's state machine. */
+        /* Create OS Thread for APP_Tasks. */
+    xTaskCreate((TaskFunction_t) _APP_Tasks,
+                "APP_Tasks",
+                1024,
+                NULL,
+                1,
+                &xAPP_Tasks);
+
+
+
+
+    /* Start RTOS Scheduler. */
+    
+     /**********************************************************************
+     * Create all Threads for APP Tasks before starting FreeRTOS Scheduler *
+     ***********************************************************************/
+    vTaskStartScheduler(); /* This function never returns. */
+
 }
-
-void UART1_FAULT_Handler (void)
-{
-    UART1_FAULT_InterruptHandler();
-}
-
-void UART1_RX_Handler (void)
-{
-    UART1_RX_InterruptHandler();
-}
-
-void UART1_TX_Handler (void)
-{
-    UART1_TX_InterruptHandler();
-}
-
-void UART2_FAULT_Handler (void)
-{
-    UART2_FAULT_InterruptHandler();
-}
-
-void UART2_RX_Handler (void)
-{
-    UART2_RX_InterruptHandler();
-}
-
-void UART2_TX_Handler (void)
-{
-    UART2_TX_InterruptHandler();
-}
-
-void UART3_FAULT_Handler (void)
-{
-    UART3_FAULT_InterruptHandler();
-}
-
-void UART3_RX_Handler (void)
-{
-    UART3_RX_InterruptHandler();
-}
-
-void UART3_TX_Handler (void)
-{
-    UART3_TX_InterruptHandler();
-}
-
-void UART4_FAULT_Handler (void)
-{
-    UART4_FAULT_InterruptHandler();
-}
-
-void UART4_RX_Handler (void)
-{
-    UART4_RX_InterruptHandler();
-}
-
-void UART4_TX_Handler (void)
-{
-    UART4_TX_InterruptHandler();
-}
-
-void UART5_FAULT_Handler (void)
-{
-    UART5_FAULT_InterruptHandler();
-}
-
-void UART5_RX_Handler (void)
-{
-    UART5_RX_InterruptHandler();
-}
-
-void UART5_TX_Handler (void)
-{
-    UART5_TX_InterruptHandler();
-}
-
-void CAN1_Handler (void)
-{
-    CAN1_InterruptHandler();
-}
-
-
-
 
 /*******************************************************************************
  End of File
-*/
+ */
+

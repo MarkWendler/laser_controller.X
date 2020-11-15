@@ -7,8 +7,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef XC_HEADER_TEMPLATE_H
-#define	XC_HEADER_TEMPLATE_H
+#ifndef LASERCOMMANDS_H
+#define	LASERCOMMANDS_H
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 #include <stdint.h>
@@ -20,7 +20,7 @@
 #define LENGTH_20 20
 
 
-const struct {
+struct {
     uint8_t open[16];
     uint8_t reset[16];
     uint8_t startContinuousMeas[16];

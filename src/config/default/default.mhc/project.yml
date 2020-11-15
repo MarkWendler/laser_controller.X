@@ -27,13 +27,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: B3B5445B14BD9B6A35F1C5B995C9BBF7
-- generatedChecksum: 322976BB28859B437B0D6D3B8E2AFE42
+- generatedChecksum: EC410AF32A00CC5E9DF0F879297B47F1
   logicalPath: config\default
   name: exceptions.c
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 322976BB28859B437B0D6D3B8E2AFE42
+  userChecksum: EC410AF32A00CC5E9DF0F879297B47F1
 - generatedChecksum: B7DBFD6F500AAD4713403E985EB18EAE
   logicalPath: config\default
   name: freertos_hooks.c
@@ -48,27 +48,27 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 972E955D94A63BA89BF6ABD6AADB1023
-- generatedChecksum: 1ED33B49F8B85EA52EBB4CC15349B872
+- generatedChecksum: 079CE2B70BDCC5410BEE15E2B0F60C34
   logicalPath: config\default
   name: initialization.c
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 1ED33B49F8B85EA52EBB4CC15349B872
-- generatedChecksum: 0F53B5EE9DA62AB8D77283A197CCA067
+  userChecksum: 079CE2B70BDCC5410BEE15E2B0F60C34
+- generatedChecksum: 934384AFCB86BCB0B275391A942E1E0F
   logicalPath: config\default
   name: interrupts.c
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 0F53B5EE9DA62AB8D77283A197CCA067
-- generatedChecksum: C8D6DFEABE08CF770E9B241DF5FFBF46
+  userChecksum: 934384AFCB86BCB0B275391A942E1E0F
+- generatedChecksum: 00FDE7F003EB335D3FBD6CC57509697D
   logicalPath: config\default
   name: interrupts_a.S
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: C8D6DFEABE08CF770E9B241DF5FFBF46
+  userChecksum: 00FDE7F003EB335D3FBD6CC57509697D
 - generatedChecksum: 3FEE521CEF14928AE38E7FA9BF6D75E6
   logicalPath: FreeRTOS\Source
   name: list.c
@@ -90,34 +90,34 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 13F747CBE45AD5A7C4DF007FEA796CC9
-- generatedChecksum: 11D85966183EB2558936543D9E454814
+- generatedChecksum: 3331DAFF5D65EF495CDF9B2545D5A962
   logicalPath: config\default\peripheral\can
   name: plib_can1.c
   physicalPath: peripheral\can
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 11D85966183EB2558936543D9E454814
-- generatedChecksum: AB118EC5CE198EA3A770360F4B0027D8
+  userChecksum: 3331DAFF5D65EF495CDF9B2545D5A962
+- generatedChecksum: 92B87D12762F24C06706B84A0C0313CF
   logicalPath: config\default\peripheral\clk
   name: plib_clk.c
   physicalPath: peripheral\clk
   security: NON_SECURE
   type: SOURCE
-  userChecksum: AB118EC5CE198EA3A770360F4B0027D8
-- generatedChecksum: 75292C6DE7C29762C9965219B6A48A72
+  userChecksum: 92B87D12762F24C06706B84A0C0313CF
+- generatedChecksum: 350C7BCEE2617F68BF5CBD48713C8C9A
   logicalPath: config\default\peripheral\evic
   name: plib_evic.c
   physicalPath: peripheral\evic
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 75292C6DE7C29762C9965219B6A48A72
-- generatedChecksum: BDCDF715B691567A17C3DCF40C803508
+  userChecksum: 350C7BCEE2617F68BF5CBD48713C8C9A
+- generatedChecksum: 6D7CA72B7E2479AC883F0F1AA0CCC8AC
   logicalPath: config\default\peripheral\gpio
   name: plib_gpio.c
   physicalPath: peripheral\gpio
   security: NON_SECURE
   type: SOURCE
-  userChecksum: BDCDF715B691567A17C3DCF40C803508
+  userChecksum: 6D7CA72B7E2479AC883F0F1AA0CCC8AC
 - generatedChecksum: BB7545FB502999A8F19893F95ADE53D6
   logicalPath: config\default\peripheral\ocmp
   name: plib_ocmp1.c
@@ -153,48 +153,48 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 37B6ABA9DE9EFD80D6FAAEFB371F3410
-- generatedChecksum: EC7B5CB44DA32EC6C7C32009BF8300CC
+- generatedChecksum: 08DC8C0BDDD0BB12DB878ACDC5213769
   logicalPath: config\default\peripheral\uart
   name: plib_uart1.c
   physicalPath: peripheral\uart
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 116F36A9F0DB70DCC98EAE1DD1B5FFAE
-- generatedChecksum: 19C0981DB38209B9E56E0E0C76CF8C6C
+  userChecksum: 08DC8C0BDDD0BB12DB878ACDC5213769
+- generatedChecksum: 8402CC79622401657F476B13845CD5F3
   logicalPath: config\default\peripheral\uart
   name: plib_uart2.c
   physicalPath: peripheral\uart
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 19C0981DB38209B9E56E0E0C76CF8C6C
-- generatedChecksum: 7B173C0F225B801397A1E9BE7667436E
+  userChecksum: 8402CC79622401657F476B13845CD5F3
+- generatedChecksum: 6258402CA73744D9FD698FAE0732595C
   logicalPath: config\default\peripheral\uart
   name: plib_uart3.c
   physicalPath: peripheral\uart
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 7B173C0F225B801397A1E9BE7667436E
-- generatedChecksum: 30CB102C9E4C8F672075778AC1692673
+  userChecksum: 6258402CA73744D9FD698FAE0732595C
+- generatedChecksum: 37156FD1321FFEB1B4946EEC21F35AA2
   logicalPath: config\default\peripheral\uart
   name: plib_uart4.c
   physicalPath: peripheral\uart
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 30CB102C9E4C8F672075778AC1692673
-- generatedChecksum: D7CABEDF77164FA828C9A61008D2FE74
+  userChecksum: 37156FD1321FFEB1B4946EEC21F35AA2
+- generatedChecksum: 4E6E26092FD4FAD60B7CBD481C3BB0A1
   logicalPath: config\default\peripheral\uart
   name: plib_uart5.c
   physicalPath: peripheral\uart
   security: NON_SECURE
   type: SOURCE
-  userChecksum: D7CABEDF77164FA828C9A61008D2FE74
-- generatedChecksum: 267C60526CE87D716C23F11AFD79858A
+  userChecksum: 4E6E26092FD4FAD60B7CBD481C3BB0A1
+- generatedChecksum: C6C6E22812529CE78394DEBA77FD0F23
   logicalPath: config\default\peripheral\uart
   name: plib_uart6.c
   physicalPath: peripheral\uart
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 267C60526CE87D716C23F11AFD79858A
+  userChecksum: C6C6E22812529CE78394DEBA77FD0F23
 - generatedChecksum: 0E851159CFF7B40028D295108F0F7474
   logicalPath: FreeRTOS\Source\portable\MPLAB\PIC32MK
   name: port.c
@@ -236,7 +236,7 @@ files:
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 521B2029B41A70E81966D326C528C1D7
+  userChecksum: 8DEB57A843D4AB4748D2E8244B9803A1
 - generatedChecksum: F1B86F6E1527FD59A8713B67564F2898
   logicalPath: FreeRTOS\Source
   name: timers.c
@@ -244,13 +244,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: F1B86F6E1527FD59A8713B67564F2898
-- generatedChecksum: 99A3824297E8878AAACA0DBEC52BCD6C
+- generatedChecksum: 8E9EFE646006141CF079585662DAD2E1
   logicalPath: config\default\stdio
   name: xc32_monitor.c
   physicalPath: stdio
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 99A3824297E8878AAACA0DBEC52BCD6C
+  userChecksum: 8E9EFE646006141CF079585662DAD2E1
 - generatedChecksum: AF3A8D8AA610E7DFD3E38DDAC5E42074
   logicalPath: FreeRTOS\Source\include
   name: FreeRTOS.h
@@ -308,9 +308,9 @@ files:
   type: HEADER
   userChecksum: 1EA4EDD5EA90F43EC407DE32441159A9
 - generatedChecksum: 5D5C52527AB1435153DB9B50ADE6B79D
-  logicalPath: packs\PIC32MK0512MCF064_DFP
+  logicalPath: config\default
   name: device.h
-  physicalPath: ..\..\packs\PIC32MK0512MCF064_DFP
+  physicalPath: ''
   security: NON_SECURE
   type: HEADER
   userChecksum: 5D5C52527AB1435153DB9B50ADE6B79D
@@ -370,13 +370,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: EDB1F623D39C14DC72E68558DB41B57B
-- generatedChecksum: 5236FCCFA1DB9F4E7564CF7A7910BE7E
+- generatedChecksum: DBEAE2255E15E7D4FB65D669EFCA5870
   logicalPath: config\default\peripheral\can
   name: plib_can1.h
   physicalPath: peripheral\can
   security: NON_SECURE
   type: HEADER
-  userChecksum: 5236FCCFA1DB9F4E7564CF7A7910BE7E
+  userChecksum: DBEAE2255E15E7D4FB65D669EFCA5870
 - generatedChecksum: 8AFBDF00241A310A8769EBA143EE6601
   logicalPath: config\default\peripheral\can
   name: plib_can_common.h
@@ -398,13 +398,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 70E9A938E3E7F3E5AF30FC751388E937
-- generatedChecksum: B9B606787A96F3F42A6EA0F1BBE97857
+- generatedChecksum: 200F6D425A72080879CA016E21B76D12
   logicalPath: config\default\peripheral\gpio
   name: plib_gpio.h
   physicalPath: peripheral\gpio
   security: NON_SECURE
   type: HEADER
-  userChecksum: B9B606787A96F3F42A6EA0F1BBE97857
+  userChecksum: 200F6D425A72080879CA016E21B76D12
 - generatedChecksum: 6CEA8203317C87CCE71D84E419A2B434
   logicalPath: config\default\peripheral\ocmp
   name: plib_ocmp1.h
@@ -460,7 +460,7 @@ files:
   physicalPath: peripheral\uart
   security: NON_SECURE
   type: HEADER
-  userChecksum: CBC930E458309C4CB475EBAF2CC00890
+  userChecksum: 7B9E1ABB4EB466D0BB9D0E143BDD2E90
 - generatedChecksum: 802E41280DEA41F6B6FF1E79BC50C503
   logicalPath: config\default\peripheral\uart
   name: plib_uart2.h
@@ -608,13 +608,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: C8BB70E2423A57902E9FDC0C9EC81F8D
-- generatedChecksum: 9A7344615980CB9443B6436E41E2155A
+- generatedChecksum: 2C8543317B3F067432097AB9BD3E8672
   logicalPath: config\default
   name: toolchain_specifics.h
   physicalPath: ''
   security: NON_SECURE
   type: HEADER
-  userChecksum: 9A7344615980CB9443B6436E41E2155A
+  userChecksum: 2C8543317B3F067432097AB9BD3E8672
 - generatedChecksum: null
   logicalPath: config\default
   name: user.h
@@ -622,6 +622,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: null
+- generatedChecksum: 0460F0B88C70C7F5E2402FCCCD7119D3
+  logicalPath: config\default
+  name: p32MK0512MCF064.ld
+  physicalPath: ''
+  security: NON_SECURE
+  type: LINKER
+  userChecksum: 0460F0B88C70C7F5E2402FCCCD7119D3
 format_version: v1.0
 libraries: []
 settings:
@@ -637,6 +644,12 @@ settings:
   key: extra-include-directories
   security: NON_SECURE
   value: ../src;../src/config/default;../src/packs/PIC32MK0512MCF064_DFP;
+- append: false
+  category: C32
+  delimiter: ''
+  key: generate-micro-compressed-code
+  security: NON_SECURE
+  value: 'false'
 - append: true
   category: C32-AS
   delimiter: ;
@@ -663,7 +676,7 @@ settings:
   value: 'true'
 - append: true
   category: C32-LD
-  delimiter: ;
+  delimiter: ;=
   key: preprocessor-macros
   security: NON_SECURE
   value: ''
@@ -673,4 +686,16 @@ settings:
   key: extra-include-directories
   security: NON_SECURE
   value: ../src/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MK;../src/third_party/rtos/FreeRTOS/Source/include;
+- append: true
+  category: C32CPP
+  delimiter: ;
+  key: extra-include-directories
+  security: NON_SECURE
+  value: ../src;../src/config/default;../src/packs/PIC32MK0512MCF064_DFP;
+- append: false
+  category: C32CPP
+  delimiter: ''
+  key: generate-micro-compressed-code
+  security: NON_SECURE
+  value: 'false'
 sourcePaths: []

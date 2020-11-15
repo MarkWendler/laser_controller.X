@@ -61,61 +61,68 @@
 // *****************************************************************************
 // *****************************************************************************
 
+
 /*** Macros for GPIO_Boost_1 pin ***/
 #define GPIO_Boost_1_Set()               (LATBSET = (1<<14))
 #define GPIO_Boost_1_Clear()             (LATBCLR = (1<<14))
 #define GPIO_Boost_1_Toggle()            (LATBINV= (1<<14))
-#define GPIO_Boost_1_Get()               ((PORTB >> 14) & 0x1)
 #define GPIO_Boost_1_OutputEnable()      (TRISBCLR = (1<<14))
 #define GPIO_Boost_1_InputEnable()       (TRISBSET = (1<<14))
+#define GPIO_Boost_1_Get()               ((PORTB >> 14) & 0x1)
 #define GPIO_Boost_1_PIN                  GPIO_PIN_RB14
+
 /*** Macros for GPIO_Boost_6 pin ***/
 #define GPIO_Boost_6_Set()               (LATASET = (1<<1))
 #define GPIO_Boost_6_Clear()             (LATACLR = (1<<1))
 #define GPIO_Boost_6_Toggle()            (LATAINV= (1<<1))
-#define GPIO_Boost_6_Get()               ((PORTA >> 1) & 0x1)
 #define GPIO_Boost_6_OutputEnable()      (TRISACLR = (1<<1))
 #define GPIO_Boost_6_InputEnable()       (TRISASET = (1<<1))
+#define GPIO_Boost_6_Get()               ((PORTA >> 1) & 0x1)
 #define GPIO_Boost_6_PIN                  GPIO_PIN_RA1
+
 /*** Macros for GPIO_Boost_5 pin ***/
 #define GPIO_Boost_5_Set()               (LATESET = (1<<12))
 #define GPIO_Boost_5_Clear()             (LATECLR = (1<<12))
 #define GPIO_Boost_5_Toggle()            (LATEINV= (1<<12))
-#define GPIO_Boost_5_Get()               ((PORTE >> 12) & 0x1)
 #define GPIO_Boost_5_OutputEnable()      (TRISECLR = (1<<12))
 #define GPIO_Boost_5_InputEnable()       (TRISESET = (1<<12))
+#define GPIO_Boost_5_Get()               ((PORTE >> 12) & 0x1)
 #define GPIO_Boost_5_PIN                  GPIO_PIN_RE12
+
 /*** Macros for GPIO_Boost_4 pin ***/
 #define GPIO_Boost_4_Set()               (LATESET = (1<<14))
 #define GPIO_Boost_4_Clear()             (LATECLR = (1<<14))
 #define GPIO_Boost_4_Toggle()            (LATEINV= (1<<14))
-#define GPIO_Boost_4_Get()               ((PORTE >> 14) & 0x1)
 #define GPIO_Boost_4_OutputEnable()      (TRISECLR = (1<<14))
 #define GPIO_Boost_4_InputEnable()       (TRISESET = (1<<14))
+#define GPIO_Boost_4_Get()               ((PORTE >> 14) & 0x1)
 #define GPIO_Boost_4_PIN                  GPIO_PIN_RE14
+
 /*** Macros for GPIO_LED1 pin ***/
 #define GPIO_LED1_Set()               (LATDSET = (1<<8))
 #define GPIO_LED1_Clear()             (LATDCLR = (1<<8))
 #define GPIO_LED1_Toggle()            (LATDINV= (1<<8))
-#define GPIO_LED1_Get()               ((PORTD >> 8) & 0x1)
 #define GPIO_LED1_OutputEnable()      (TRISDCLR = (1<<8))
 #define GPIO_LED1_InputEnable()       (TRISDSET = (1<<8))
+#define GPIO_LED1_Get()               ((PORTD >> 8) & 0x1)
 #define GPIO_LED1_PIN                  GPIO_PIN_RD8
+
 /*** Macros for GPIO_Boost_2 pin ***/
 #define GPIO_Boost_2_Set()               (LATBSET = (1<<12))
 #define GPIO_Boost_2_Clear()             (LATBCLR = (1<<12))
 #define GPIO_Boost_2_Toggle()            (LATBINV= (1<<12))
-#define GPIO_Boost_2_Get()               ((PORTB >> 12) & 0x1)
 #define GPIO_Boost_2_OutputEnable()      (TRISBCLR = (1<<12))
 #define GPIO_Boost_2_InputEnable()       (TRISBSET = (1<<12))
+#define GPIO_Boost_2_Get()               ((PORTB >> 12) & 0x1)
 #define GPIO_Boost_2_PIN                  GPIO_PIN_RB12
+
 /*** Macros for GPIO_Boost_3 pin ***/
 #define GPIO_Boost_3_Set()               (LATBSET = (1<<13))
 #define GPIO_Boost_3_Clear()             (LATBCLR = (1<<13))
 #define GPIO_Boost_3_Toggle()            (LATBINV= (1<<13))
-#define GPIO_Boost_3_Get()               ((PORTB >> 13) & 0x1)
 #define GPIO_Boost_3_OutputEnable()      (TRISBCLR = (1<<13))
 #define GPIO_Boost_3_InputEnable()       (TRISBSET = (1<<13))
+#define GPIO_Boost_3_Get()               ((PORTB >> 13) & 0x1)
 #define GPIO_Boost_3_PIN                  GPIO_PIN_RB13
 
 
@@ -255,42 +262,42 @@ void GPIO_PortOutputEnable(GPIO_PORT port, uint32_t mask);
 
 static inline void GPIO_PinWrite(GPIO_PIN pin, bool value)
 {
-    GPIO_PortWrite(pin>>4, (uint32_t)(0x1) << (pin & 0xF), (uint32_t)(value) << (pin & 0xF));
+    GPIO_PortWrite((GPIO_PORT)(pin>>4), (uint32_t)(0x1) << (pin & 0xF), (uint32_t)(value) << (pin & 0xF));
 }
 
 static inline bool GPIO_PinRead(GPIO_PIN pin)
 {
-    return (bool)(((GPIO_PortRead(pin>>4)) >> (pin & 0xF)) & 0x1);
+    return (bool)(((GPIO_PortRead((GPIO_PORT)(pin>>4))) >> (pin & 0xF)) & 0x1);
 }
 
 static inline bool GPIO_PinLatchRead(GPIO_PIN pin)
 {
-    return (bool)((GPIO_PortLatchRead(pin>>4) >> (pin & 0xF)) & 0x1);
+    return (bool)((GPIO_PortLatchRead((GPIO_PORT)(pin>>4)) >> (pin & 0xF)) & 0x1);
 }
 
 static inline void GPIO_PinToggle(GPIO_PIN pin)
 {
-    GPIO_PortToggle(pin>>4, 0x1 << (pin & 0xF));
+    GPIO_PortToggle((GPIO_PORT)(pin>>4), 0x1 << (pin & 0xF));
 }
 
 static inline void GPIO_PinSet(GPIO_PIN pin)
 {
-    GPIO_PortSet(pin>>4, 0x1 << (pin & 0xF));
+    GPIO_PortSet((GPIO_PORT)(pin>>4), 0x1 << (pin & 0xF));
 }
 
 static inline void GPIO_PinClear(GPIO_PIN pin)
 {
-    GPIO_PortClear(pin>>4, 0x1 << (pin & 0xF));
+    GPIO_PortClear((GPIO_PORT)(pin>>4), 0x1 << (pin & 0xF));
 }
 
 static inline void GPIO_PinInputEnable(GPIO_PIN pin)
 {
-    GPIO_PortInputEnable(pin>>4, 0x1 << (pin & 0xF));
+    GPIO_PortInputEnable((GPIO_PORT)(pin>>4), 0x1 << (pin & 0xF));
 }
 
 static inline void GPIO_PinOutputEnable(GPIO_PIN pin)
 {
-    GPIO_PortOutputEnable(pin>>4, 0x1 << (pin & 0xF));
+    GPIO_PortOutputEnable((GPIO_PORT)(pin>>4), 0x1 << (pin & 0xF));
 }
 
 

@@ -35,6 +35,16 @@
 
 void vLaserCommTask(void* pvParameter); //LaserModule
 
+typedef enum {
+    ERROR_TO_CAN = 0x11,    // Message from CAN
+    ALARM_TO_CAN = 0x01,    // Alarm event from distance measure task
+} EnumToCANEventType_t;
+
+typedef struct {
+    EnumToCANEventType_t eventType;
+    uint8_t id;   
+} ToCANEvent_t;
+
 #endif /* _EXAMPLE_FILE_NAME_H */
 
 /* *****************************************************************************

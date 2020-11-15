@@ -33,9 +33,10 @@
 
 #include "laserDescriptor.h"
 #include "laserCommSM.h"
+#include "canComm.h"
 
 #define QUEUE_LENGTH 4
-
+#define NUM_OF_LASERMODULES 5
 // *****************************************************************************
 // *****************************************************************************
 // Section: Main Entry Point
@@ -44,9 +45,12 @@
 
 /* Handle for the APP_Tasks. */
 TaskHandle_t xLaser_1_Comm_Task, xLaser_2_Comm_Task, xLaser_3_Comm_Task, 
-        xLaser_4_Comm_Task, xLaser_5_Comm_Task, xLaser_6_Comm_Task;
+        xLaser_4_Comm_Task, xLaser_5_Comm_Task, xLaser_6_Comm_Task,
+        xCanCommTask;
 
 TaskHandle_t xDebugTask;
+
+CANTask_t canTaskParameters;
 
 extern LaserModule_t module_1, module_2, module_3, module_4,  module_5, module_6;
 
@@ -61,7 +65,10 @@ int main ( void )
     /* Initialize all modules */
     SYS_Initialize ( NULL );
        
-
+    //create queue for CAN Task to receive message from laserControl instances
+    canTaskParameters.pxQueueReceiveCAN = xQueueCreate(QUEUE_LENGTH, sizeof(EnumToCANEventType_t));
+    
+    //Connect all tasks queues together   
     createAndConnectQueues(&module_1);
     createAndConnectQueues(&module_2);
     createAndConnectQueues(&module_3);
@@ -70,8 +77,17 @@ int main ( void )
     createAndConnectQueues(&module_6);
     
     createCommTasks();
-
- 
+    
+    // Create task for canCommunication
+    xTaskCreate((TaskFunction_t) vCanCommTask,
+        "DebugTask",
+        128,
+        (void*)&canTaskParameters,
+        1,
+        &xCanCommTask);  
+    
+    
+    // Create task for debugging
     xTaskCreate((TaskFunction_t) debugTask,
         "DebugTask",
         128,
@@ -102,7 +118,7 @@ uint8_t createAndConnectQueues(LaserModule_t *module){
     // Create queue for Laser Control Task
     module->ctrl.pxQueueReceiveLaserCtrl = xQueueCreate(QUEUE_LENGTH, sizeof(LaserCtrlEvent_t));
     // Connect inputs to the CTRL queue
-    module->canAttributes.pxQueueToLaserCtrl = module->ctrl.pxQueueReceiveLaserCtrl;
+    canTaskParameters.pxQueueToLaserCtrl[(module->ctrl.ID-1)] = module->ctrl.pxQueueReceiveLaserCtrl;
     module->distAttributes.pxQueueToLaserCtrl = module->ctrl.pxQueueReceiveLaserCtrl;
     
     // Create queue for Laser Communication Task
@@ -115,10 +131,8 @@ uint8_t createAndConnectQueues(LaserModule_t *module){
     // Connect inputs to distance measure task
     module->comm.pxQueueToDistance = module->distAttributes.pxQueueReceiveDistance;
     
-    //Create queue for CAN task
-    module->canAttributes.pxQueueReceiveCAN = xQueueCreate(QUEUE_LENGTH, sizeof(ToCANEvent_t));
     // Connect inputs to CAN Task
-    module->ctrl.pxQueueToCAN = module->canAttributes.pxQueueReceiveCAN;
+    module->ctrl.pxQueueToCAN = canTaskParameters.pxQueueReceiveCAN;
     
     
     //TODO implement error handle if not succesfully created
