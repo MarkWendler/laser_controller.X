@@ -10,6 +10,7 @@
 #include "laserControlSM.h"
 #include "laserAddresses.h"
 #include "laserCommSM.h"
+#include "config/default/peripheral/gpio/plib_gpio.h"
 
 //local
 typedef enum {
@@ -71,7 +72,8 @@ void vCanCommTask(void *pvParameter) {
                 sendCAN_Frame.length = 1;
                 //TODO error check
                 CAN1_MessageTransmit(sendCAN_Frame.id,sendCAN_Frame.length,&sendCAN_Frame.data,
-                        0,CAN_MSG_TX_DATA_FRAME); //FIFO transmit
+                        1,CAN_MSG_TX_DATA_FRAME); //FIFO 1 --> transmit
+                            GPIO_LED1_Toggle();
                 break;
             default:
                 break;

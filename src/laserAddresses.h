@@ -8,6 +8,7 @@
 
 
 #define BROADCAST 0xFF
+#define DEBUG_ADDR 0xF0
 //LASERCONTROLLER module's number.
 #define LASERCONTROLLER 1
 

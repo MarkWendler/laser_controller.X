@@ -111,13 +111,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 350C7BCEE2617F68BF5CBD48713C8C9A
-- generatedChecksum: 6D7CA72B7E2479AC883F0F1AA0CCC8AC
+- generatedChecksum: A144A21F274ACA0669C04246DF9D0B6C
   logicalPath: config\default\peripheral\gpio
   name: plib_gpio.c
   physicalPath: peripheral\gpio
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 6D7CA72B7E2479AC883F0F1AA0CCC8AC
+  userChecksum: A144A21F274ACA0669C04246DF9D0B6C
 - generatedChecksum: BB7545FB502999A8F19893F95ADE53D6
   logicalPath: config\default\peripheral\ocmp
   name: plib_ocmp1.c
@@ -398,13 +398,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 70E9A938E3E7F3E5AF30FC751388E937
-- generatedChecksum: 200F6D425A72080879CA016E21B76D12
+- generatedChecksum: AA509F5646A8971D915917AA544EB9F8
   logicalPath: config\default\peripheral\gpio
   name: plib_gpio.h
   physicalPath: peripheral\gpio
   security: NON_SECURE
   type: HEADER
-  userChecksum: 200F6D425A72080879CA016E21B76D12
+  userChecksum: AA509F5646A8971D915917AA544EB9F8
 - generatedChecksum: 6CEA8203317C87CCE71D84E419A2B434
   logicalPath: config\default\peripheral\ocmp
   name: plib_ocmp1.h

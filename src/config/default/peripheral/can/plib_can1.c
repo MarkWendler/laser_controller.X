@@ -802,6 +802,7 @@ void CAN1_InterruptHandler(void)
                 can1CallbackObj[fifoNum].callback(can1CallbackObj[fifoNum].context);
             }
         }
+        _nop();
         if (C1INT & _C1INT_TBIF_MASK)
         {
             fifoNum = (uint8_t)C1VEC & _C1VEC_ICODE_MASK;
@@ -809,6 +810,9 @@ void CAN1_InterruptHandler(void)
             {
                 *(volatile uint32_t *)(&C1FIFOINT0CLR + (fifoNum * CAN_FIFO_OFFSET)) = _C1FIFOINT0_TXEMPTYIE_MASK;
             }
+            _nop();
+            _nop();
+            _nop();
             IFS5CLR = _IFS5_CAN1IF_MASK;
             C1INTCLR = _C1INT_TBIF_MASK | _C1INT_TBIE_MASK;
             if (can1CallbackObj[fifoNum].callback != NULL)

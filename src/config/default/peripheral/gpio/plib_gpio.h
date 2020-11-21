@@ -80,6 +80,24 @@
 #define GPIO_Boost_6_Get()               ((PORTA >> 1) & 0x1)
 #define GPIO_Boost_6_PIN                  GPIO_PIN_RA1
 
+/*** Macros for GPIO_BTN_S2 pin ***/
+#define GPIO_BTN_S2_Set()               (LATCSET = (1<<2))
+#define GPIO_BTN_S2_Clear()             (LATCCLR = (1<<2))
+#define GPIO_BTN_S2_Toggle()            (LATCINV= (1<<2))
+#define GPIO_BTN_S2_OutputEnable()      (TRISCCLR = (1<<2))
+#define GPIO_BTN_S2_InputEnable()       (TRISCSET = (1<<2))
+#define GPIO_BTN_S2_Get()               ((PORTC >> 2) & 0x1)
+#define GPIO_BTN_S2_PIN                  GPIO_PIN_RC2
+
+/*** Macros for GPIO_BTN_S3 pin ***/
+#define GPIO_BTN_S3_Set()               (LATCSET = (1<<11))
+#define GPIO_BTN_S3_Clear()             (LATCCLR = (1<<11))
+#define GPIO_BTN_S3_Toggle()            (LATCINV= (1<<11))
+#define GPIO_BTN_S3_OutputEnable()      (TRISCCLR = (1<<11))
+#define GPIO_BTN_S3_InputEnable()       (TRISCSET = (1<<11))
+#define GPIO_BTN_S3_Get()               ((PORTC >> 11) & 0x1)
+#define GPIO_BTN_S3_PIN                  GPIO_PIN_RC11
+
 /*** Macros for GPIO_Boost_5 pin ***/
 #define GPIO_Boost_5_Set()               (LATESET = (1<<12))
 #define GPIO_Boost_5_Clear()             (LATECLR = (1<<12))

@@ -31,6 +31,7 @@
 #include "task.h"
 #include "queue.h"
 
+#include "laserAddresses.h"
 #include "laserDescriptor.h"
 #include "laserCommSM.h"
 #include "canComm.h"
@@ -66,7 +67,7 @@ int main ( void )
     SYS_Initialize ( NULL );
        
     //create queue for CAN Task to receive message from laserControl instances
-    canTaskParameters.pxQueueReceiveCAN = xQueueCreate(QUEUE_LENGTH, sizeof(EnumToCANEventType_t));
+    canTaskParameters.pxQueueReceiveCAN = xQueueCreate(QUEUE_LENGTH, sizeof(ToCANEvent_t));
     
     //Connect all tasks queues together   
     createAndConnectQueues(&module_1);
@@ -80,7 +81,7 @@ int main ( void )
     
     // Create task for canCommunication
     xTaskCreate((TaskFunction_t) vCanCommTask,
-        "DebugTask",
+        "CanCommTask",
         128,
         (void*)&canTaskParameters,
         1,
@@ -104,11 +105,20 @@ int main ( void )
 }
 
 void debugTask(void){
+    ToCANEvent_t debugCANEvent;
+    debugCANEvent.id = DEBUG_ADDR;
+    debugCANEvent.eventType = DEBUG_MSG_TO_CAN;
     
     while(1u){
-        GPIO_LED1_Toggle();
+        
         vTaskDelay(pdMS_TO_TICKS(500));
-             
+        if(!GPIO_BTN_S2_Get()){
+
+            if( xQueueSend( canTaskParameters.pxQueueReceiveCAN,&debugCANEvent,  20 ) != pdPASS )
+                {
+                    /* TODO: Failed to post to the message handle even after 20 ticks */
+                }  
+        }  
         
     }
 }
