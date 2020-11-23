@@ -70,7 +70,7 @@
 #define CAN_FILTER_OFFSET           0x4
 /* Acceptance Mask Offset in word (4 bytes) */
 #define CAN_ACCEPTANCE_MASK_OFFSET  0x4
-#define CAN_MESSAGE_RAM_CONFIG_SIZE 10
+#define CAN_MESSAGE_RAM_CONFIG_SIZE 2
 #define CAN_MSG_IDE_MASK            0x10000000
 #define CAN_MSG_SID_MASK            0x7FF
 #define CAN_MSG_TIMESTAMP_MASK      0xFFFF0000
@@ -127,8 +127,8 @@ void CAN1_Initialize(void)
     C1FIFOBA = (uint32_t)KVA_TO_PA(can_message_buffer);
 
     /* Configure CAN FIFOs */
-    C1FIFOCON0 = (((5 - 1) << _C1FIFOCON0_FSIZE_POSITION) & _C1FIFOCON0_FSIZE_MASK);
-    C1FIFOCON1 = (((5 - 1) << _C1FIFOCON1_FSIZE_POSITION) & _C1FIFOCON1_FSIZE_MASK) | _C1FIFOCON1_TXEN_MASK | ((0x0 << _C1FIFOCON1_TXPRI_POSITION) & _C1FIFOCON1_TXPRI_MASK) | ((0x0 << _C1FIFOCON1_RTREN_POSITION) & _C1FIFOCON1_RTREN_MASK);
+    C1FIFOCON0 = (((1 - 1) << _C1FIFOCON0_FSIZE_POSITION) & _C1FIFOCON0_FSIZE_MASK);
+    C1FIFOCON1 = (((1 - 1) << _C1FIFOCON1_FSIZE_POSITION) & _C1FIFOCON1_FSIZE_MASK) | _C1FIFOCON1_TXEN_MASK | ((0x0 << _C1FIFOCON1_TXPRI_POSITION) & _C1FIFOCON1_TXPRI_MASK) | ((0x0 << _C1FIFOCON1_RTREN_POSITION) & _C1FIFOCON1_RTREN_MASK);
 
     /* Configure CAN Filters */
     C1RXF0 = (4095 & _C1RXF0_EID_MASK) | (((4095 & 0x1FFC0000u) >> 18u) << _C1RXF0_SID_POSITION) | _C1RXF0_EXID_MASK;
@@ -792,10 +792,17 @@ void CAN1_InterruptHandler(void)
                             *can1RxMsg[fifoNum][msgIndex].timestamp = (rxMessage->msgSID & CAN_MSG_TIMESTAMP_MASK) >> 16;
                         }
                     }
-                    /* Message processing is done, update the message buffer pointer. */
-                    *(volatile uint32_t *)(&C1FIFOCON0SET + (fifoNum * CAN_FIFO_OFFSET)) = _C1FIFOCON0_UINC_MASK;
+
                 }
+                                        //Manual modification of bug of Harmony 3 driver
+                _nop();
+                /* Message processing is done, update the message buffer pointer. */
+                *(volatile uint32_t *)(&C1FIFOCON0SET + (fifoNum * CAN_FIFO_OFFSET)) = _C1FIFOCON0_UINC_MASK;
+                _nop();
             }
+            _nop();
+            _nop();
+            _nop();            
             C1INTCLR = _C1INT_RBIF_MASK | _C1INT_RBIE_MASK;
             if (can1CallbackObj[fifoNum].callback != NULL)
             {

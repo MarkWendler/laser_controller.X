@@ -12,6 +12,17 @@
 #include "task.h"
 #include "projdefs.h"
 
+typedef enum {
+    COMM_UNINITIALISED = 0, //laser module unitialised
+    SEND_INIT, //laser module communication OK and waiting to start measure
+    SEND_START_MEASURE,  //Module is calibrating
+    READ_DISTANCE, //process measured data
+    WAIT_MEASURE_DATA,
+    SEND_STOP_MEASURE,      
+    IDLE,                 //No communication ongoing
+    COMM_ERROR        
+} commState;
+
 /**
  * @param module laser module instance
  */
@@ -20,7 +31,7 @@ void vLaserCommTask(void *pvParameter) {
     //Use local state?
     LaserCommunication_t *module = (LaserCommunication_t*) pvParameter;
     commState eCommState = COMM_UNINITIALISED;
-    
+    LaserCommEvent_t receivedCommand; //Receive command from queue
     while (1) {
 
         switch (eCommState) {
@@ -53,9 +64,8 @@ void vLaserCommTask(void *pvParameter) {
                 if (module->dataAvailableCount() >= OPEN_ANSWER_LENGTH) { // read data from buffer
                     module->dataRead(module->databuffer, OPEN_ANSWER_LENGTH);
                     //TODO Compare, but for testing we just go forward.
-                    module->state = WAIT_MEASURE_DATA;
                     // MODULE state change to initialised
-                    eCommState = MEASURE;
+                    eCommState = WAIT_MEASURE_DATA;
                 }
                 else {
                     //No answer--> No Module connected
@@ -101,51 +111,16 @@ void vLaserCommTask(void *pvParameter) {
                 }
                 break;
             case IDLE: //No communication ongoing
-                //TODO: Bring task to suspend
+                // Wait until external command "ON"
+                xQueueReceive(module->pxQueueReceiveLaserComm, (void *)&receivedCommand, portMAX_DELAY);
+                if(receivedCommand == TURN_OFF) eCommState = SEND_START_MEASURE;
+                if(receivedCommand == TURN_ON) eCommState = SEND_START_MEASURE;
+                if(receivedCommand == RESET_MODULE) eCommState = COMM_UNINITIALISED;
+                
                 break;
-
-
             case COMM_ERROR: //Communication error
                 // TODO clear buffer
                 break;
-
-
-
-
-                /*      Lasr strength control does not work    
-                        case SEND_LASER_STRENGTH: //Module is calibrating
-                            sendLaserCommand(commandsSend.setStrength_1, module->comm.dataSend, LENGTH_STANDARD);
-                            module->comm.receiveCount = 0; //clear received data counter
-                            module->comm.state = WAIT_STRENGTH_FEEDBACK;            
-                            break;
-
-                        case WAIT_STRENGTH_FEEDBACK:
-                            while (module->comm.dataAvailable() ) { // read data from buffer
-                                module->comm.databuffer[module->comm.receiveCount] = module->comm.dataReceive();
-                                module->comm.receiveCount++;
-                            }
-                            if (module->comm.receiveCount == LENGTH_STANDARD) {//if expected length arrived
-                                //TODO Compare, but for testing we just go forward.
-                                module->comm.state = SEND_LASER_STRENGTH2;
-                            }
-                            break;            
-                        case SEND_LASER_STRENGTH2: //Module is calibrating
-                            sendLaserCommand(commandsSend.setStrength_2, module->comm.dataSend, LENGTH_20);
-                            module->comm.receiveCount = 0; //clear received data counter
-                            module->comm.state = WAIT_STRENGTH2_FEEDBACK;            
-                            break;
-
-                        case WAIT_STRENGTH2_FEEDBACK:
-                            while (module->comm.dataAvailable() ) { // read data from buffer
-                                module->comm.databuffer[module->comm.receiveCount] = module->comm.dataReceive();
-                                module->comm.receiveCount++;
-                            }
-                            if (module->comm.receiveCount == LENGTH_20) {//if expected length arrived
-                                //TODO Compare, but for testing we just go forward.
-                                module->comm.state = IDLE;
-                            }
-                            break; 
-                 */
             default:
                 eCommState = COMM_UNINITIALISED;
         }

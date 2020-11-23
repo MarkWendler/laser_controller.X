@@ -90,13 +90,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 13F747CBE45AD5A7C4DF007FEA796CC9
-- generatedChecksum: 3331DAFF5D65EF495CDF9B2545D5A962
+- generatedChecksum: 31C718FFA28145986B2348DD5F9C3E82
   logicalPath: config\default\peripheral\can
   name: plib_can1.c
   physicalPath: peripheral\can
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 3331DAFF5D65EF495CDF9B2545D5A962
+  userChecksum: 509730D6B7D06DA6EDAF58246705B3D2
 - generatedChecksum: 92B87D12762F24C06706B84A0C0313CF
   logicalPath: config\default\peripheral\clk
   name: plib_clk.c

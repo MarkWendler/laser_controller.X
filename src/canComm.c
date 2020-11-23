@@ -5,6 +5,8 @@
  * 
  */
 #include "canComm.h"
+#include "semphr.h"
+
 #include "projdefs.h"
 #include "peripheral/can/plib_can1.h"
 #include "laserControlSM.h"
@@ -56,13 +58,8 @@ void vCanCommTask(void *pvParameter) {
 
         switch (eCanState) {
             case CAN_UNINITIALISED:
-                //Register receive FIFO callback
-                CAN1_CallbackRegister( vCAN_InterruptHandler, NULL, 0 ); 
-                
-                
-                //TODO Register transmit FIFO callback?   
-                
                 eCanState = CAN_IDLE;
+
                 break;
             case CAN_IDLE:
                 //Wait for event infinitely  
@@ -80,49 +77,63 @@ void vCanCommTask(void *pvParameter) {
         }
     }
 }
-
+//----------------------
+// Can message receive related implementations
+volatile SemaphoreHandle_t xCANRecSemaphore;
 
 void vCAN_InterruptHandler(uintptr_t context) {
     /* Check CAN Status */
     CAN_ERROR status = CAN1_ErrorGet();
-    canMessage_t xCanMessage;
-    CAN_MSG_RX_ATTRIBUTE canMsgAttrib; //dummy, not used, always normal message
-    
     if ((status & (CAN_ERROR_TX_RX_WARNING_STATE | CAN_ERROR_RX_WARNING_STATE |
             CAN_ERROR_TX_WARNING_STATE | CAN_ERROR_RX_BUS_PASSIVE_STATE |
             CAN_ERROR_TX_BUS_PASSIVE_STATE | CAN_ERROR_TX_BUS_OFF_STATE)) == CAN_ERROR_NONE)
     {
         //notify message distributor of incoming message
-        CAN1_MessageReceive(&xCanMessage.id, &xCanMessage.length, &xCanMessage.data,0,1,&canMsgAttrib);
-        //send message to queue from ISR to the distributor task
-        if( xQueueSendFromISR( qCanMessageReceived , ( void * ) &xCanMessage,NULL ) != pdPASS )
-        {
-            /* TODO: Failed to post the message handle. */
-        }
-   
+        xSemaphoreGiveFromISR( xCANRecSemaphore, NULL);
+ 
     }
     else
     { //CAN Error
         //TODO implement error handling
     }
 }
-/*
- * 
+
+ // Buffer to receive   
+    static uint8_t rx_message[8];
+    static uint32_t rx_messageID = 0;
+    static uint8_t rx_messageLength = 0;
+    static uint16_t timestamp = 0;    
+    static CAN_MSG_RX_ATTRIBUTE msgAttr = CAN_MSG_RX_DATA_FRAME;
+/**
+ * Only one instance is available!
  */
 void vMessageDistributor(void *pvParameter){
-    
+
+
     uint8_t i; // For loops
-    canMessage_t xCanMessage; // can message received struct
     CANTask_t *pCAN_Queues = (CANTask_t*)pvParameter; //queues
     QueueHandle_t qToLaserCtrl = NULL;
     LaserCtrlEvent_t xLaserCtrlEvent;
+    
     xLaserCtrlEvent.eventType = CAN_MSG;
+    
+    xCANRecSemaphore = xSemaphoreCreateBinary(); //TODO handle memory run out
+    
+    //Register receive FIFO callback
+    CAN1_CallbackRegister( vCAN_InterruptHandler, NULL, 0 ); 
+
     while(1){
-        
+        // Register for msg receiving
+        memset(rx_message, 0x00, sizeof(rx_message));
+        if (CAN1_MessageReceive(&rx_messageID, &rx_messageLength, rx_message, &timestamp, 0, &msgAttr) == false) {
+            // Failed.
+            _nop();
+        }        
         //wait for message infinitely
-        xQueueReceive(qCanMessageReceived, &xCanMessage, portMAX_DELAY);
-        xLaserCtrlEvent.data = xCanMessage.data;
-        if((uint16_t)xCanMessage.id == BROADCAST){
+        xSemaphoreTake( xCANRecSemaphore, portMAX_DELAY);
+        
+        xLaserCtrlEvent.data = rx_message[0];
+        if((uint16_t)rx_messageID == BROADCAST){
             // Send event to all laser instance
             for(i=0; i<=5; i++){
                 if( xQueueSend( pCAN_Queues->pxQueueToLaserCtrl[i] , ( void * ) &xLaserCtrlEvent, 20 ) != pdPASS )
@@ -133,8 +144,8 @@ void vMessageDistributor(void *pvParameter){
 
         }
         else{ //Not broadcast
-            
-            switch((uint16_t)xCanMessage.id){
+            qToLaserCtrl = NULL;
+            switch((uint16_t)rx_messageID){
                 case LASER_ADDRESS_1:
                     qToLaserCtrl = pCAN_Queues->pxQueueToLaserCtrl[0];
                     break;

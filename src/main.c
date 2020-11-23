@@ -47,6 +47,8 @@
 /* Handle for the APP_Tasks. */
 TaskHandle_t xLaser_1_Comm_Task, xLaser_2_Comm_Task, xLaser_3_Comm_Task, 
         xLaser_4_Comm_Task, xLaser_5_Comm_Task, xLaser_6_Comm_Task,
+        xLaser_1_Ctrl_Task, xLaser_2_Ctrl_Task, xLaser_3_Ctrl_Task, 
+        xLaser_4_Ctrl_Task, xLaser_5_Ctrl_Task, xLaser_6_Ctrl_Task,
         xCanCommTask;
 
 TaskHandle_t xDebugTask;
@@ -57,6 +59,7 @@ extern LaserModule_t module_1, module_2, module_3, module_4,  module_5, module_6
 
 // Local functions
 void createCommTasks(void);
+void createCtrlTasks(void);
 uint8_t createAndConnectQueues(LaserModule_t *);
 void debugTask(void);
 
@@ -77,7 +80,10 @@ int main ( void )
     createAndConnectQueues(&module_5);
     createAndConnectQueues(&module_6);
     
+    //Create tasks to communicate with Laser modules via UARTs
     createCommTasks();
+    // Create Ctrl tasks that connects all modules together
+    createCtrlTasks();
     
     // Create task for canCommunication
     xTaskCreate((TaskFunction_t) vCanCommTask,
@@ -158,7 +164,7 @@ void createCommTasks(void){
                 128,
                 (void*)&module_1.comm,
                 1,
-                &xLaser_2_Comm_Task);    
+                &xLaser_1_Comm_Task);    
     
         xTaskCreate((TaskFunction_t) vLaserCommTask,
                 "Laser_2_Comm_Task",
@@ -194,6 +200,50 @@ void createCommTasks(void){
                 (void*)&module_6.comm,
                 1,
                 &xLaser_6_Comm_Task);    
+}
+
+void createCtrlTasks(void){
+        xTaskCreate((TaskFunction_t) vModuleControlTask,
+                "Laser_1_Ctrl_Task",
+                128,
+                (void*)&module_1.ctrl,
+                1,
+                &xLaser_1_Ctrl_Task);    
+    
+        xTaskCreate((TaskFunction_t) vModuleControlTask,
+                "Laser_2_Ctrl_Task",
+                128,
+                (void*)&module_2.ctrl,
+                1,
+                &xLaser_2_Ctrl_Task);
+
+        xTaskCreate((TaskFunction_t) vModuleControlTask,
+                "Laser_3_Ctrl_Task",
+                128,
+                (void*)&module_3.ctrl,
+                1,
+                &xLaser_3_Ctrl_Task);
+
+        xTaskCreate((TaskFunction_t) vModuleControlTask,
+                "Laser_4_Ctrl_Task",
+                128,
+                (void*)&module_4.ctrl,
+                1,
+                &xLaser_4_Ctrl_Task);
+
+        xTaskCreate((TaskFunction_t) vModuleControlTask,
+                "Laser_5_Ctrl_Task",
+                128,
+                (void*)&module_5.ctrl,
+                1,
+                &xLaser_5_Ctrl_Task);
+
+        xTaskCreate((TaskFunction_t) vModuleControlTask,
+                "Laser_6_Ctrl_Task",
+                128,
+                (void*)&module_6.ctrl,
+                1,
+                &xLaser_6_Ctrl_Task);    
 }
 
 /*******************************************************************************

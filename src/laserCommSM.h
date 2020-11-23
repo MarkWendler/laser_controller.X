@@ -1,11 +1,5 @@
 /* ************************************************************************** */
-/** Descriptive File Name
-
-  @Company
-    Company Name
-
-  @File Name
-    filename.h
+/** Laser UART communication task
 
   @Summary
     Brief description of the file.
@@ -15,36 +9,30 @@
  */
 /* ************************************************************************** */
 
-#ifndef _EXAMPLE_FILE_NAME_H    /* Guard against multiple inclusion */
-#define _EXAMPLE_FILE_NAME_H
+#ifndef LASER_COMM_H    /* Guard against multiple inclusion */
+#define LASER_COMM_H
 
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-/* Section: Included Files                                                    */
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-/* This section lists the other files that are included in this file.
- */
-#include "laserDescriptor.h"
-
-/**
- * @parameter pvParameter pointer to LaserModule instance
- */
+#include "FreeRTOS.h"
+#include "queue.h"
 
 void vLaserCommTask(void* pvParameter); //LaserModule
+//--------------------------------
 
 typedef enum {
-    ERROR_TO_CAN = 0x11,    // Message from CAN
-    ALARM_TO_CAN = 0x01,    // Alarm event from distance measure task
-    DEBUG_MSG_TO_CAN = 0xF1,
-} EnumToCANEventType_t;
+    TURN_ON,
+    TURN_OFF,
+    RESET_MODULE, //Placeholder
+}LaserCommEvent_t;
 
 typedef struct {
-    EnumToCANEventType_t eventType;
-    uint8_t id;   
-} ToCANEvent_t;
+    uint8_t receiveCount;
+    size_t(*dataSend)(uint8_t*, const size_t); //UART send function
+    size_t(*dataRead)(uint8_t*, const size_t); //UART read function
+    size_t(*dataAvailableCount) (void); //UART RX ready
+    uint8_t databuffer[32];
+    QueueHandle_t pxQueueToDistance; // Queue to the Laser ctrl task
+    QueueHandle_t pxQueueReceiveLaserComm; // Queue to get events from other tasks
+} LaserCommunication_t;
 
 #endif /* _EXAMPLE_FILE_NAME_H */
 

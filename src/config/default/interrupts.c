@@ -164,9 +164,7 @@ void UART5_TX_Handler (void)
 
 void CAN1_Handler (void)
 {
-
     CAN1_InterruptHandler();
-    //IFS5bits.CAN1IF = 0; //TODO: Why do I have to do it explicitly?    
 }
 
 

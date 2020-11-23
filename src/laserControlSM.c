@@ -7,38 +7,43 @@
 /* ************************************************************************** */
 
 #include "laserDescriptor.h"
-
-/* ************************************************************************** */
-/* Section: File Scope or Global Data                                         */
-/* ************************************************************************** */
-
-
-/* ************************************************************************** */
-/** Descriptive Data Item Name
-
-  @Summary
-    Brief one-line summary of the data item.
- */
-int global_data;
-
-/* ************************************************************************** */
-// Functions                                                   */
-/* ************************************************************************** */
+#include "laserControlSM.h"
 
 /**
  * @param length Size of the array that must be sent
  */
-void moduleControlTask(LaserCtrl_t *module) {
-    switch (module->state) {
-        case UNINITIALISED:
-            //TODO for now we just wait the communication task start the initialisation
-            break;
-        case INITIALISED_OFF:
-            //TODO for now wait for external command   
-            break;
-        default:
-            break;
+void vModuleControlTask(void *pvParameter) {
+
+    LaserCtrl_t *module = (LaserCtrl_t*) pvParameter;
+    QueueHandle_t pxQueueReceiveLaserCtrlEvt = module->pxQueueReceiveLaserCtrl;
+
+    LaserCtrlEvent_t receivedEvent;
+    
+    while (1) {
+        
+        xQueueReceive(pxQueueReceiveLaserCtrlEvt, (void *)&receivedEvent, portMAX_DELAY);
+        
+        switch (receivedEvent.eventType) {
+            case CAN_MSG: // Message from CAN
+                __builtin_software_breakpoint();
+                break;
+            case ALARM_EVENT: // Alarm event from distance measure task
+                _nop();
+                break;
+            case CALIB_DONE: // Placeholder
+                _nop();
+                break;
+            case ERROR_COMM: // Placeholder
+                _nop();
+                break;
+            default:
+                //error should not come here
+                _nop();
+                break;
+        }
     }
+
+
 }
 
 /* *****************************************************************************
