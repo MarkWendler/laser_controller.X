@@ -836,14 +836,14 @@ children:
     - type: Values
       children:
       - type: User
-        attributes: {value: '60000000'}
+        attributes: {value: '120000000'}
   - type: String
     attributes: {id: CONFIG_SYS_CLK_PBCLK3_FREQ}
     children:
     - type: Values
       children:
       - type: User
-        attributes: {value: '60000000'}
+        attributes: {value: '120000000'}
   - type: String
     attributes: {id: CONFIG_SYS_CLK_PBCLK4_FREQ}
     children:
@@ -872,6 +872,27 @@ children:
       children:
       - type: User
         attributes: {value: '120000000'}
+  - type: Integer
+    attributes: {id: CONFIG_SYS_CLK_PBDIV1}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: '2'}
+  - type: Integer
+    attributes: {id: CONFIG_SYS_CLK_PBDIV2}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: '1'}
+  - type: Integer
+    attributes: {id: CONFIG_SYS_CLK_PBDIV3}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: '1'}
   - type: Integer
     attributes: {id: CONFIG_SYS_CLK_PBDIV5}
     children:
@@ -983,63 +1004,63 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
+        attributes: {id: core, value: 'true'}
   - type: Boolean
     attributes: {id: EVIC_164_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
+        attributes: {id: core, value: 'true'}
   - type: String
     attributes: {id: EVIC_164_INTERRUPT_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: UART6_FAULT_Handler}
+        attributes: {id: core, value: UART6_FAULT_InterruptHandler}
   - type: Boolean
     attributes: {id: EVIC_165_ENABLE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
+        attributes: {id: core, value: 'true'}
   - type: Boolean
     attributes: {id: EVIC_165_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
+        attributes: {id: core, value: 'true'}
   - type: String
     attributes: {id: EVIC_165_INTERRUPT_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: UART6_RX_Handler}
+        attributes: {id: core, value: UART6_RX_InterruptHandler}
   - type: Boolean
     attributes: {id: EVIC_166_ENABLE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
+        attributes: {id: core, value: 'true'}
   - type: Boolean
     attributes: {id: EVIC_166_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
+        attributes: {id: core, value: 'true'}
   - type: String
     attributes: {id: EVIC_166_INTERRUPT_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: UART6_TX_Handler}
+        attributes: {id: core, value: UART6_TX_InterruptHandler}
   - type: Boolean
     attributes: {id: EVIC_167_ENABLE}
     children:
@@ -1848,7 +1869,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: OCMP2_CLOCK_ENABLE}
     children:
@@ -1862,7 +1883,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: OCMP3_CLOCK_ENABLE}
     children:
@@ -1876,7 +1897,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: OCMP4_CLOCK_ENABLE}
     children:
@@ -1890,7 +1911,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Integer
     attributes: {id: OCMP5_CLOCK_FREQUENCY}
     children:
@@ -1954,6 +1975,27 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '0'}
+  - type: String
+    attributes: {id: PB1DIV_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '0x8001'}
+  - type: String
+    attributes: {id: PB2DIV_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '0x8000'}
+  - type: String
+    attributes: {id: PB3DIV_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '0x8000'}
   - type: String
     attributes: {id: PB5DIV_VALUE}
     children:
@@ -3327,7 +3369,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: TMR2_CLOCK_ENABLE}
     children:
@@ -3341,7 +3383,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Integer
     attributes: {id: TMR3_CLOCK_FREQUENCY}
     children:
@@ -3404,7 +3446,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: UART1_FAULT_INTERRUPT_ENABLE}
     children:
@@ -3502,7 +3544,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: UART2_FAULT_INTERRUPT_ENABLE}
     children:
@@ -3600,7 +3642,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: UART3_FAULT_INTERRUPT_ENABLE}
     children:
@@ -3698,7 +3740,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: UART4_FAULT_INTERRUPT_ENABLE}
     children:
@@ -3796,7 +3838,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: UART5_FAULT_INTERRUPT_ENABLE}
     children:
@@ -3894,91 +3936,91 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
+        attributes: {id: core, value: '120000000'}
   - type: Boolean
     attributes: {id: UART6_FAULT_INTERRUPT_ENABLE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: 'false'}
+        attributes: {id: uart6, value: 'true'}
   - type: Boolean
     attributes: {id: UART6_FAULT_INTERRUPT_ENABLE_UPDATE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: String
     attributes: {id: UART6_FAULT_INTERRUPT_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: UART6_FAULT_Handler}
+        attributes: {id: uart6, value: UART6_FAULT_InterruptHandler}
   - type: Boolean
     attributes: {id: UART6_FAULT_INTERRUPT_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: 'false'}
+        attributes: {id: uart6, value: 'true'}
   - type: Boolean
     attributes: {id: UART6_RX_INTERRUPT_ENABLE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: 'false'}
+        attributes: {id: uart6, value: 'true'}
   - type: Boolean
     attributes: {id: UART6_RX_INTERRUPT_ENABLE_UPDATE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: String
     attributes: {id: UART6_RX_INTERRUPT_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: UART6_RX_Handler}
+        attributes: {id: uart6, value: UART6_RX_InterruptHandler}
   - type: Boolean
     attributes: {id: UART6_RX_INTERRUPT_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: 'false'}
+        attributes: {id: uart6, value: 'true'}
   - type: Boolean
     attributes: {id: UART6_TX_INTERRUPT_ENABLE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: 'false'}
+        attributes: {id: uart6, value: 'true'}
   - type: Boolean
     attributes: {id: UART6_TX_INTERRUPT_ENABLE_UPDATE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: String
     attributes: {id: UART6_TX_INTERRUPT_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: UART6_TX_Handler}
+        attributes: {id: uart6, value: UART6_TX_InterruptHandler}
   - type: Boolean
     attributes: {id: UART6_TX_INTERRUPT_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart6, value: 'false'}
+        attributes: {id: uart6, value: 'true'}
   - type: Integer
     attributes: {id: USB1_CLOCK_FREQUENCY}
     children:

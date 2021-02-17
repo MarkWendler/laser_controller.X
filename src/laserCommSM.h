@@ -19,9 +19,9 @@ void vLaserCommTask(void* pvParameter); //LaserModule
 //--------------------------------
 
 typedef enum {
-    TURN_ON,
-    TURN_OFF,
-    RESET_MODULE, //Placeholder
+    TURN_ON = 1,
+    TURN_OFF = 2,
+    RESET_MODULE = 3, //Placeholder
 }LaserCommEvent_t;
 
 typedef struct {

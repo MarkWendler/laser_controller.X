@@ -340,6 +340,60 @@ IntVectorUART5_TX_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorUART5_TX_Handler
+    .extern  UART6_FAULT_Handler
+
+    .section   .vector_164,code, keep
+    .equ     __vector_dispatch_164, IntVectorUART6_FAULT_Handler
+    .global  __vector_dispatch_164
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART6_FAULT_Handler
+
+IntVectorUART6_FAULT_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART6_FAULT_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART6_FAULT_Handler
+    .extern  UART6_RX_Handler
+
+    .section   .vector_165,code, keep
+    .equ     __vector_dispatch_165, IntVectorUART6_RX_Handler
+    .global  __vector_dispatch_165
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART6_RX_Handler
+
+IntVectorUART6_RX_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART6_RX_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART6_RX_Handler
+    .extern  UART6_TX_Handler
+
+    .section   .vector_166,code, keep
+    .equ     __vector_dispatch_166, IntVectorUART6_TX_Handler
+    .global  __vector_dispatch_166
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART6_TX_Handler
+
+IntVectorUART6_TX_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART6_TX_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART6_TX_Handler
     .extern  CAN1_Handler
 
     .section   .vector_167,code, keep

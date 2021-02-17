@@ -75,6 +75,9 @@ void UART4_TX_InterruptHandler( void );
 void UART5_FAULT_InterruptHandler( void );
 void UART5_RX_InterruptHandler( void );
 void UART5_TX_InterruptHandler( void );
+void UART6_FAULT_InterruptHandler( void );
+void UART6_RX_InterruptHandler( void );
+void UART6_TX_InterruptHandler( void );
 void CAN1_InterruptHandler( void );
 
 
@@ -160,6 +163,21 @@ void UART5_RX_Handler (void)
 void UART5_TX_Handler (void)
 {
     UART5_TX_InterruptHandler();
+}
+
+void UART6_FAULT_Handler (void)
+{
+    UART6_FAULT_InterruptHandler();
+}
+
+void UART6_RX_Handler (void)
+{
+    UART6_RX_InterruptHandler();
+}
+
+void UART6_TX_Handler (void)
+{
+    UART6_TX_InterruptHandler();
 }
 
 void CAN1_Handler (void)

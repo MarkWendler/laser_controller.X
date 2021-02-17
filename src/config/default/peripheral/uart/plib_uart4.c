@@ -120,7 +120,7 @@ void UART4_Initialize( void )
     U4STASET = (_U4STA_UTXEN_MASK | _U4STA_URXEN_MASK | _U4STA_UTXISEL1_MASK);
 
     /* BAUD Rate register Setup */
-    U4BRG = 129;
+    U4BRG = 260;
 
     IEC2CLR = _IEC2_U4TXIE_MASK;
 

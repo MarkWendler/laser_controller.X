@@ -5,12 +5,19 @@ children:
 - type: Symbols
   children:
   - type: Integer
+    attributes: {id: BAUD_RATE}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: '115000'}
+  - type: Integer
     attributes: {id: BRG_VALUE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart5, value: '129'}
+        attributes: {id: uart5, value: '260'}
   - type: KeyValueSet
     attributes: {id: UART_BRGH}
     children:
@@ -34,7 +41,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: uart5, value: '60000000'}
+        attributes: {id: uart5, value: '120000000'}
   - type: File
     attributes: {id: UART_HEADER}
     children:

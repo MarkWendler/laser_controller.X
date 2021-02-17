@@ -20,29 +20,18 @@
 #include "canComm.h"
 #include "laserControlSM.h"
 #include "laserCommSM.h"
+#include "laserDistanceMeasure.h"
 /*************************************************
  *     Definitions for Laser class and tasks
  */
-typedef struct {
-    QueueHandle_t pxQueueToLaserCtrl; // Queue to the Laser ctrl task
-    QueueHandle_t pxQueueReceiveDistance; // Queue to get events from other tasks
-} DistanceTask_t; // Handles the distance measurement and filtering
 
 typedef struct {
 
     LaserCtrl_t ctrl;
     LaserCommunication_t comm;
-    DistanceTask_t distAttributes;
+    LaserDistanceTask_t distanceQueues;
 
 } LaserModule_t;
-
-/******************************************************************************
- * queue type defs
- ******************************************************************************/
-
-//---------------------------------
-
-typedef uint32_t distance_t;
 
 //---------------------------------
 

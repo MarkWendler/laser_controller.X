@@ -49,6 +49,8 @@ TaskHandle_t xLaser_1_Comm_Task, xLaser_2_Comm_Task, xLaser_3_Comm_Task,
         xLaser_4_Comm_Task, xLaser_5_Comm_Task, xLaser_6_Comm_Task,
         xLaser_1_Ctrl_Task, xLaser_2_Ctrl_Task, xLaser_3_Ctrl_Task, 
         xLaser_4_Ctrl_Task, xLaser_5_Ctrl_Task, xLaser_6_Ctrl_Task,
+        xLaser_1_Dist_Task, xLaser_2_Dist_Task, xLaser_3_Dist_Task, 
+        xLaser_4_Dist_Task, xLaser_5_Dist_Task, xLaser_6_Dist_Task,        
         xCanCommTask;
 
 TaskHandle_t xDebugTask;
@@ -60,6 +62,7 @@ extern LaserModule_t module_1, module_2, module_3, module_4,  module_5, module_6
 // Local functions
 void createCommTasks(void);
 void createCtrlTasks(void);
+void createDistanceTasks(void);
 uint8_t createAndConnectQueues(LaserModule_t *);
 void debugTask(void);
 
@@ -70,7 +73,7 @@ int main ( void )
     SYS_Initialize ( NULL );
        
     //create queue for CAN Task to receive message from laserControl instances
-    canTaskParameters.pxQueueReceiveCAN = xQueueCreate(QUEUE_LENGTH, sizeof(ToCANEvent_t));
+    canTaskParameters.pxQueueReceiveEvent = xQueueCreate(QUEUE_LENGTH, sizeof(ToCANEvent_t));
     
     //Connect all tasks queues together   
     createAndConnectQueues(&module_1);
@@ -84,6 +87,8 @@ int main ( void )
     createCommTasks();
     // Create Ctrl tasks that connects all modules together
     createCtrlTasks();
+    // Create distance tasks that controls the distance management
+    createDistanceTasks();
     
     // Create task for canCommunication
     xTaskCreate((TaskFunction_t) vCanCommTask,
@@ -111,16 +116,16 @@ int main ( void )
 }
 
 void debugTask(void){
-    ToCANEvent_t debugCANEvent;
-    debugCANEvent.id = DEBUG_ADDR;
-    debugCANEvent.eventType = DEBUG_MSG_TO_CAN;
+    ToCANEvent_t debugEvent;
+    debugEvent.eventType = DEBUG_MSG_TO_CAN;
+    debugEvent.id = LASERCONTROLLER; //pass the controller module number for now
     
     while(1u){
         
         vTaskDelay(pdMS_TO_TICKS(500));
         if(!GPIO_BTN_S2_Get()){
 
-            if( xQueueSend( canTaskParameters.pxQueueReceiveCAN,&debugCANEvent,  20 ) != pdPASS )
+            if( xQueueSend( canTaskParameters.pxQueueReceiveEvent,&debugEvent,  20 ) != pdPASS )
                 {
                     /* TODO: Failed to post to the message handle even after 20 ticks */
                 }  
@@ -135,7 +140,7 @@ uint8_t createAndConnectQueues(LaserModule_t *module){
     module->ctrl.pxQueueReceiveLaserCtrl = xQueueCreate(QUEUE_LENGTH, sizeof(LaserCtrlEvent_t));
     // Connect inputs to the CTRL queue
     canTaskParameters.pxQueueToLaserCtrl[(module->ctrl.ID-1)] = module->ctrl.pxQueueReceiveLaserCtrl;
-    module->distAttributes.pxQueueToLaserCtrl = module->ctrl.pxQueueReceiveLaserCtrl;
+    module->distanceQueues.pxQueueToLaserCtrl = module->ctrl.pxQueueReceiveLaserCtrl;
     
     // Create queue for Laser Communication Task
     module->comm.pxQueueReceiveLaserComm = xQueueCreate(QUEUE_LENGTH, sizeof(LaserCommEvent_t));
@@ -143,12 +148,13 @@ uint8_t createAndConnectQueues(LaserModule_t *module){
     module->ctrl.pxQueueToComm = module->comm.pxQueueReceiveLaserComm;
     
     // Create queue for distance measure task
-    module->distAttributes.pxQueueReceiveDistance = xQueueCreate(QUEUE_LENGTH, sizeof(distance_t));
+    module->distanceQueues.pxQueueReceiveDistance = xQueueCreate(QUEUE_LENGTH, sizeof(DistanceEventType_t));
     // Connect inputs to distance measure task
-    module->comm.pxQueueToDistance = module->distAttributes.pxQueueReceiveDistance;
+    module->comm.pxQueueToDistance = module->distanceQueues.pxQueueReceiveDistance;
+    module->ctrl.pxQueueToDistance = module->distanceQueues.pxQueueReceiveDistance;
     
     // Connect inputs to CAN Task
-    module->ctrl.pxQueueToCAN = canTaskParameters.pxQueueReceiveCAN;
+    module->ctrl.pxQueueToCAN = canTaskParameters.pxQueueReceiveEvent;
     
     
     //TODO implement error handle if not succesfully created
@@ -245,7 +251,49 @@ void createCtrlTasks(void){
                 1,
                 &xLaser_6_Ctrl_Task);    
 }
+void createDistanceTasks(void){
+        xTaskCreate((TaskFunction_t) vLaserDistanceMeasureTask,
+                "Laser_1_Dist_Task",
+                128,
+                (void*)&module_1.distanceQueues,
+                1,
+                &xLaser_1_Dist_Task);    
+    
+        xTaskCreate((TaskFunction_t) vLaserDistanceMeasureTask,
+                "Laser_2_Dist_Task",
+                128,
+                (void*)&module_2.distanceQueues,
+                1,
+                &xLaser_2_Dist_Task);
 
+        xTaskCreate((TaskFunction_t) vLaserDistanceMeasureTask,
+                "Laser_3_Dist_Task",
+                128,
+                (void*)&module_3.distanceQueues,
+                1,
+                &xLaser_3_Dist_Task);
+
+        xTaskCreate((TaskFunction_t) vLaserDistanceMeasureTask,
+                "Laser_4_Dist_Task",
+                128,
+                (void*)&module_4.distanceQueues,
+                1,
+                &xLaser_4_Dist_Task);
+
+        xTaskCreate((TaskFunction_t) vLaserDistanceMeasureTask,
+                "Laser_5_Dist_Task",
+                128,
+                (void*)&module_5.distanceQueues,
+                1,
+                &xLaser_5_Dist_Task);
+
+        xTaskCreate((TaskFunction_t) vLaserDistanceMeasureTask,
+                "Laser_6_Dist_Task",
+                128,
+                (void*)&module_6.distanceQueues,
+                1,
+                &xLaser_6_Dist_Task);    
+}
 /*******************************************************************************
  End of File
 */

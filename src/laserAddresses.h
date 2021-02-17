@@ -9,7 +9,7 @@
 
 #define BROADCAST 0xFF
 #define DEBUG_ADDR 0xF0
-//LASERCONTROLLER module's number.
+//LASERCONTROLLER module's ID.
 #define LASERCONTROLLER 1
 
 #if LASERCONTROLLER == 1

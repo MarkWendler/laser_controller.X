@@ -90,7 +90,13 @@ void CLK_Initialize( void )
     SYSKEY = 0x556699AA;
 
  
-        /* Peripheral Bus 5 is by default enabled, set its divisor */
+        /* Peripheral Bus 2 is by default enabled, set its divisor */
+    PB2DIVbits.PBDIV = 0;
+
+    /* Peripheral Bus 3 is by default enabled, set its divisor */
+    PB3DIVbits.PBDIV = 0;
+
+    /* Peripheral Bus 5 is by default enabled, set its divisor */
     PB5DIVbits.PBDIV = 11;
 
   

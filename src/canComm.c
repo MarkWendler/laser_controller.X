@@ -18,7 +18,7 @@
 typedef enum {
     CAN_UNINITIALISED = 0, //laser module unitialised
     CAN_IDLE, //laser module communication OK and waiting to start measure
-    
+    TRY_SEND_AGAIN, //CAN TX is busy, so we have to try again
 } CAN_STATE_t;
 
 typedef struct {
@@ -63,15 +63,33 @@ void vCanCommTask(void *pvParameter) {
                 break;
             case CAN_IDLE:
                 //Wait for event infinitely  
-                xQueueReceive(pCAN_Queues->pxQueueReceiveCAN, (void *)&receivedEvent, portMAX_DELAY);
+                xQueueReceive(pCAN_Queues->pxQueueReceiveEvent, (void *)&receivedEvent, portMAX_DELAY);
                 sendCAN_Frame.id = receivedEvent.id;
                 sendCAN_Frame.data = (uint8_t) receivedEvent.eventType;
                 sendCAN_Frame.length = 1;
-                //TODO error check
-                CAN1_MessageTransmit(sendCAN_Frame.id,sendCAN_Frame.length,&sendCAN_Frame.data,
-                        1,CAN_MSG_TX_DATA_FRAME); //FIFO 1 --> transmit
-                            GPIO_LED1_Toggle();
+                
+                if( true == CAN1_MessageTransmit(sendCAN_Frame.id,sendCAN_Frame.length,&sendCAN_Frame.data,
+                        1,CAN_MSG_TX_DATA_FRAME) ) //FIFO 1 --> transmit
+                {
+                    //send succesful
+                    //GPIO_LED1_Toggle();
+                }
+                else {//SEND failed, so try again
+                    eCanState = TRY_SEND_AGAIN;
+                }
                 break;
+            case TRY_SEND_AGAIN:
+                vTaskDelay(pdMS_TO_TICKS(2)); //Wait some time to send the previous message
+                if( true == CAN1_MessageTransmit(sendCAN_Frame.id,sendCAN_Frame.length,&sendCAN_Frame.data,
+                        1,CAN_MSG_TX_DATA_FRAME) ) //FIFO 1 --> transmit
+                {
+                    eCanState = CAN_IDLE;
+                    //GPIO_LED1_Toggle();
+                }
+                else {//SEND failed, so try again
+                    eCanState = TRY_SEND_AGAIN;
+                }
+      
             default:
                 break;
         }

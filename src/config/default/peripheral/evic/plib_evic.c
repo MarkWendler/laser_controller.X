@@ -71,6 +71,9 @@ void EVIC_Initialize( void )
     IPC17SET = 0x4 | 0x0;  /* UART5_FAULT:  Priority 1 / Subpriority 0 */
     IPC17SET = 0x400 | 0x0;  /* UART5_RX:  Priority 1 / Subpriority 0 */
     IPC17SET = 0x40000 | 0x0;  /* UART5_TX:  Priority 1 / Subpriority 0 */
+    IPC41SET = 0x4 | 0x0;  /* UART6_FAULT:  Priority 1 / Subpriority 0 */
+    IPC41SET = 0x400 | 0x0;  /* UART6_RX:  Priority 1 / Subpriority 0 */
+    IPC41SET = 0x40000 | 0x0;  /* UART6_TX:  Priority 1 / Subpriority 0 */
     IPC41SET = 0x4000000 | 0x0;  /* CAN1:  Priority 1 / Subpriority 0 */
 
 

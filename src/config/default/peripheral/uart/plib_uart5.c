@@ -120,7 +120,7 @@ void UART5_Initialize( void )
     U5STASET = (_U5STA_UTXEN_MASK | _U5STA_URXEN_MASK | _U5STA_UTXISEL1_MASK);
 
     /* BAUD Rate register Setup */
-    U5BRG = 129;
+    U5BRG = 260;
 
     IEC2CLR = _IEC2_U5TXIE_MASK;
 

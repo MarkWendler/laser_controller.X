@@ -10,14 +10,23 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tmr2, value: '60000000'}
+        attributes: {id: tmr2, value: '120000000'}
   - type: Long
     attributes: {id: TIMER_PERIOD}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tmr2, value: '17999'}
+        attributes: {id: tmr2, value: '35999'}
+  - type: Float
+    attributes: {id: TIMER_TIME_PERIOD_MS}
+    children:
+    - type: Attributes
+      children:
+      - type: Float
+        attributes: {id: max}
+        children:
+        - {type: Value, value: '0.546125'}
   - type: Integer
     attributes: {id: TIMER_WIDTH}
     children:

@@ -9,13 +9,17 @@
 #ifndef LASER_CONTROL_H    /* Guard against multiple inclusion */
 #define LASER_CONTROL_H
 
+#include "FreeRTOS.h"
+#include "queue.h"
 
 // Input queue type for the control task
 typedef enum {
     CAN_MSG,    // Message from CAN
     ALARM_EVENT,      // Alarm event from distance measure task
-    CALIB_DONE, // Placeholder
+    CALIB_DONE, // Calibration done from distance measure task
+    CALIB_ERROR_NO_MEASUREMENT,
     ERROR_COMM, // Placeholder
+    ERROR_NO_CALIB,
 } EnumEventType_t;
 
 typedef struct {
